@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="JAMBI JALAN">
+  <rect width="512" height="512" fill="#0F766E" />
+  <rect x="136" y="128" width="240" height="200" rx="28" fill="#FFFFFF" />
+  <rect x="168" y="164" width="176" height="64" rx="10" fill="#0F766E" />
+  <circle cx="184" cy="352" r="26" fill="#FFFFFF" />
+  <circle cx="328" cy="352" r="26" fill="#FFFFFF" />
+</svg>

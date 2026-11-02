@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+:root {
+  --bg-canvas: #f6f5f0;
+  --bg-surface: #ffffff;
+  --bg-elevated: #eceae2;
+  --bg-board: #111c18;
+
+  --text-primary: #111c18;
+  --text-secondary: #3f4d47;
+  --text-muted: #576660;
+
+  --border-subtle: #d5d2c8;
+  --border-strong: #111c18;
+
+  --brand-primary: #0f766e;
+  --brand-primary-soft: #e6f4f1;
+  --brand-primary-deep: #0b5650;
+
+  --accent-amber: #b45309;
+  --accent-amber-soft: #fef3c7;
+  --accent-amber-deep: #78350f;
+
+  --status-danger: #b91c1c;
+  --status-danger-soft: #fee2e2;
+  --status-danger-deep: #7f1d1d;
+
+  --corridor-k1: #0f766e;
+  --corridor-k2: #1d4ed8;
+  --corridor-k3: #9333ea;
+
+  --bg-pramudi: #111c18;
+  --bg-pramudi-panel: #1b2a24;
+  --bg-pramudi-raised: #24342d;
+  --text-pramudi: #f6f5f0;
+  --text-pramudi-secondary: #d5d2c8;
+  --text-pramudi-muted: #9fb0a8;
+  --border-pramudi: #3f4d47;
+  --pramudi-live: #5eead4;
+  --pramudi-danger: #fca5a5;
+  --pramudi-amber: #fcd34d;
+
+  --tap-min: 44px;
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --radius-badge: 6px;
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-canvas: var(--bg-canvas);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-board: var(--bg-board);
+
+  --color-ink: var(--text-primary);
+  --color-ink-secondary: var(--text-secondary);
+  --color-ink-muted: var(--text-muted);
+
+  --color-line: var(--border-subtle);
+  --color-line-strong: var(--border-strong);
+
+  --color-brand: var(--brand-primary);
+  --color-brand-soft: var(--brand-primary-soft);
+  --color-brand-deep: var(--brand-primary-deep);
+
+  --color-amber: var(--accent-amber);
+  --color-amber-soft: var(--accent-amber-soft);
+  --color-amber-deep: var(--accent-amber-deep);
+
+  --color-danger: var(--status-danger);
+  --color-danger-soft: var(--status-danger-soft);
+  --color-danger-deep: var(--status-danger-deep);
+
+  --color-k1: var(--corridor-k1);
+  --color-k2: var(--corridor-k2);
+  --color-k3: var(--corridor-k3);
+
+  --color-pramudi-bg: var(--bg-pramudi);
+  --color-pramudi-panel: var(--bg-pramudi-panel);
+  --color-pramudi-raised: var(--bg-pramudi-raised);
+  --color-pramudi-text: var(--text-pramudi);
+  --color-pramudi-subtext: var(--text-pramudi-secondary);
+  --color-pramudi-muted: var(--text-pramudi-muted);
+  --color-pramudi-line: var(--border-pramudi);
+  --color-pramudi-live: var(--pramudi-live);
+  --color-pramudi-danger: var(--pramudi-danger);
+  --color-pramudi-amber: var(--pramudi-amber);
+
+  --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --radius-badge: 6px;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+html.mode-aksesibel {
+  font-size: 20px;
+  --border-subtle: #111c18;
+}
+
+html.kontras-tinggi {
+  --bg-canvas: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f0efe8;
+  --text-secondary: #111c18;
+  --text-muted: #111c18;
+  --border-subtle: #111c18;
+}
+
+body {
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+:where(a[href], button, summary, select, label[for], input[type="checkbox"], input[type="radio"], [role="button"]):not(:disabled) {
+  cursor: pointer;
+}
+
+:where(button, input, select, textarea):disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent-amber);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--brand-primary-soft);
+  color: var(--brand-primary-deep);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.tap-target {
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+}
+
+:is(html.mode-aksesibel, html.kontras-tinggi) :where([class~="border"], [class~="border-2"]) {
+  border-width: 2px;
+}
+
+:is(html.mode-aksesibel, html.kontras-tinggi) :where([class~="border-t"]) {
+  border-top-width: 2px;
+}
+
+:is(html.mode-aksesibel, html.kontras-tinggi) :where([class~="border-b"]) {
+  border-bottom-width: 2px;
+}
+
+:is(html.mode-aksesibel, html.kontras-tinggi) :where([class~="border-l"]) {
+  border-left-width: 2px;
+}
+
+:is(html.mode-aksesibel, html.kontras-tinggi) :where([class~="border-r"]) {
+  border-right-width: 2px;
+}
+
+:is(html.mode-aksesibel, html.kontras-tinggi) :where([class~="border-y"]) {
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+
+:is(html.mode-aksesibel, html.kontras-tinggi) :where([class~="border-x"]) {
+  border-left-width: 2px;
+  border-right-width: 2px;
+}
+
+.pb-bottom-nav {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+
+.bottom-nav-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in,
+.maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out {
+  width: 44px;
+  height: 44px;
+}
+
+.pramudi-scope :focus-visible {
+  outline-color: var(--pramudi-live);
+}
+
+.jj-map-bus {
+  display: grid;
+  min-width: 44px;
+  min-height: 44px;
+  place-items: center;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  background: var(--bg-board);
+  color: #ffffff;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.625rem;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px var(--border-strong);
+}
+
+.sheet-dialog {
+  width: 100%;
+  max-width: 100%;
+  margin: auto auto 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.sheet-dialog::backdrop {
+  background: rgba(17, 28, 24, 0.48);
+}
+
+.scrollbar-sembunyi {
+  scrollbar-width: none;
+}
+
+.scrollbar-sembunyi::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .sheet-dialog {
+    max-width: 28rem;
+    margin: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jj-map-marker > span,
+  .jj-map-marker[data-selected="true"] > span {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

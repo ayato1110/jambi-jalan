@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ArahBalikCard, TransitPlanCard } from "@/components/penumpang/TransitPlanCard";
+import type { RencanaArahBalikData, RencanaTransitData, TahapTransitData } from "@/components/penumpang/TransitPlanCard";
 import { RoutePlanCard } from "@/components/penumpang/RoutePlanCard";
 import { EmptyStateCard } from "@/components/ui/EmptyStateCard";
-import { ErrorFallbackCard } from "@/components/ui/ErrorFallbackCard";
 import { HonestyBadge } from "@/components/ui/HonestyBadge";
 import { SkeletonBlock } from "@/components/ui/SkeletonBlock";
 import { HALTE_MAP } from "@/data/halte";
@@ -12,6 +13,7 @@ import { JADWAL_PER_KORIDOR } from "@/data/jadwal";
 import { KORIDOR, KORIDOR_MAP } from "@/data/koridor";
 import { estimasiJalanKakiMenit, formatJarak, haversineKm } from "@/lib/geoUtils";
 import { cariTripBerikutnyaDiHalte, jadwalHalteMenit, menitKeJam } from "@/lib/scheduleEngine";
+import type { Halte, KoridorId } from "@/lib/types";
 import { useSimClock } from "@/lib/useSimClock";
 import { useJambiJalanStore } from "@/store/useJambiJalanStore";
 
@@ -21,6 +23,93 @@ const RUTE_POPULER = [
   { asalId: "K2-19", tujuanId: "K2-29" },
   { asalId: "K3-01", tujuanId: "K3-17" },
 ];
+
+const KANDIDAT_TRANSIT: Array<{
+  nama: string;
+  idPerKoridor: Partial<Record<KoridorId, string>>;
+}> = [
+  {
+    nama: "Pasar Keluarga",
+    idPerKoridor: { K1: "K1-18", K2: "K2-17" },
+  },
+  {
+    nama: "Terminal Rawasari",
+    idPerKoridor: { K1: "K1-01", K2: "K2-34", K3: "K3-01" },
+  },
+  {
+    nama: "Terminal Alam Barajo",
+    idPerKoridor: { K1: "K1-31", K2: "K2-01" },
+  },
+];
+
+const PASANGAN_KORIDOR: Partial<Record<KoridorId, KoridorId>> = {
+  K1: "K2",
+  K2: "K1",
+};
+
+function buatTahap(
+  koridorId: KoridorId,
+  dari: Halte,
+  ke: Halte,
+  mulaiMenit: number,
+  daftarHalte: Halte[],
+): TahapTransitData | null {
+  const koridor = KORIDOR_MAP[koridorId];
+  const daftarKoridor = daftarHalte
+    .filter((halte) => halte.koridorId === koridorId)
+    .sort((a, b) => a.urutan - b.urutan);
+
+  if (daftarKoridor.length === 0) return null;
+
+  if (dari.urutan <= ke.urutan) {
+    const berikutnya = cariTripBerikutnyaDiHalte(
+      JADWAL_PER_KORIDOR[koridorId],
+      koridorId,
+      dari.urutan,
+      daftarKoridor.length,
+      mulaiMenit,
+      koridor.durasiTempuhMenit,
+    );
+
+    if (!berikutnya) return null;
+
+    return {
+      koridor,
+      dari,
+      ke,
+      trip: berikutnya.trip,
+      berangkatDariMenit: berikutnya.tibaMenit,
+      tibaDiKeMenit: jadwalHalteMenit(
+        berikutnya.trip,
+        ke.urutan,
+        daftarKoridor.length,
+        koridor.durasiTempuhMenit,
+      ),
+      arahBalik: false,
+      besok: berikutnya.besok,
+    };
+  }
+
+  const durasi = Math.max(
+    0,
+    Math.round(
+      ((dari.urutan - ke.urutan) / Math.max(1, daftarKoridor.length - 1)) *
+        koridor.durasiTempuhMenit,
+    ),
+  );
+  const tibaDiKeMenit = mulaiMenit + durasi;
+
+  return {
+    koridor,
+    dari,
+    ke,
+    trip: null,
+    berangkatDariMenit: mulaiMenit,
+    tibaDiKeMenit,
+    arahBalik: true,
+    besok: tibaDiKeMenit >= 24 * 60,
+  };
+}
 
 export default function RencanaPerjalananPage() {
   const halteKeberangkatanId = useJambiJalanStore((state) => state.halteKeberangkatanId);
@@ -46,8 +135,14 @@ export default function RencanaPerjalananPage() {
   }, [tujuanId]);
 
   const asal =
-    HALTE_MAP.get(halteKeberangkatanId) ?? daftarHalte[0] ?? HALTE_MAP.get("K1-01") ?? null;
-  const tujuan = tujuanId ? (HALTE_MAP.get(tujuanId) ?? null) : null;
+    daftarHalte.find((halte) => halte.id === halteKeberangkatanId) ??
+    HALTE_MAP.get(halteKeberangkatanId) ??
+    daftarHalte[0] ??
+    HALTE_MAP.get("K1-01") ??
+    null;
+  const tujuan = tujuanId
+    ? (daftarHalte.find((halte) => halte.id === tujuanId) ?? HALTE_MAP.get(tujuanId) ?? null)
+    : null;
 
   const hasilCari = useMemo(() => {
     const kueri = cari.trim().toLowerCase();
@@ -99,6 +194,86 @@ export default function RencanaPerjalananPage() {
       besok: berikutnya.besok,
       jarakKm,
       jalanKakiMenit: estimasiJalanKakiMenit(jarakKm),
+    };
+  }, [asal, daftarHalte, jam.menit, tujuan]);
+
+  const transit = useMemo<RencanaTransitData | null>(() => {
+    if (!asal || !tujuan || asal.koridorId === tujuan.koridorId) return null;
+
+    let terbaik: RencanaTransitData | null = null;
+    let skorTerbaik = Number.POSITIVE_INFINITY;
+
+    for (const titik of KANDIDAT_TRANSIT) {
+      const idAsal = titik.idPerKoridor[asal.koridorId];
+      const idTujuan = titik.idPerKoridor[tujuan.koridorId];
+      if (!idAsal || !idTujuan) continue;
+
+      const halteTransitAsal = daftarHalte.find((halte) => halte.id === idAsal);
+      const halteTransitTujuan = daftarHalte.find((halte) => halte.id === idTujuan);
+      if (!halteTransitAsal || !halteTransitTujuan) continue;
+
+      const tahap1 = buatTahap(
+        asal.koridorId,
+        asal,
+        halteTransitAsal,
+        jam.menit,
+        daftarHalte,
+      );
+      if (!tahap1) continue;
+
+      const tahap2 = buatTahap(
+        tujuan.koridorId,
+        halteTransitTujuan,
+        tujuan,
+        tahap1.tibaDiKeMenit,
+        daftarHalte,
+      );
+      if (!tahap2) continue;
+
+      const totalMenit = Math.max(0, tahap2.tibaDiKeMenit - tahap1.berangkatDariMenit);
+      const jumlahArahBalik = Number(tahap1.arahBalik) + Number(tahap2.arahBalik);
+      const skor = jumlahArahBalik * 10_000 + totalMenit;
+
+      if (skor < skorTerbaik) {
+        skorTerbaik = skor;
+        terbaik = {
+          titikTransit: titik.nama,
+          tahap1,
+          tahap2,
+          totalMenit,
+          adaArahBalik: jumlahArahBalik > 0,
+        };
+      }
+    }
+
+    return terbaik;
+  }, [asal, daftarHalte, jam.menit, tujuan]);
+
+  const arahBalik = useMemo<RencanaArahBalikData | null>(() => {
+    if (!asal || !tujuan) return null;
+    if (asal.koridorId !== tujuan.koridorId || asal.urutan <= tujuan.urutan) return null;
+
+    const koridor = KORIDOR_MAP[asal.koridorId];
+    const daftarKoridor = daftarHalte
+      .filter((halte) => halte.koridorId === asal.koridorId)
+      .sort((a, b) => a.urutan - b.urutan);
+
+    const durasiMenit = Math.max(
+      0,
+      Math.round(
+        ((asal.urutan - tujuan.urutan) / Math.max(1, daftarKoridor.length - 1)) *
+          koridor.durasiTempuhMenit,
+      ),
+    );
+    const pasanganId = PASANGAN_KORIDOR[asal.koridorId] ?? null;
+
+    return {
+      koridor,
+      asal,
+      tujuan,
+      durasiMenit,
+      tibaMenit: jam.menit + durasiMenit,
+      pasanganKoridor: pasanganId ? KORIDOR_MAP[pasanganId] : null,
     };
   }, [asal, daftarHalte, jam.menit, tujuan]);
 
@@ -189,8 +364,38 @@ export default function RencanaPerjalananPage() {
           </div>
 
           <div className="mt-4 border-t border-line pt-4">
-            <label htmlFor="cari-tujuan" className="block text-sm font-semibold text-ink">
-              Cari halte tujuan
+            <label htmlFor="halte-tujuan" className="block text-sm font-semibold text-ink">
+              Halte tujuan
+            </label>
+            <select
+              id="halte-tujuan"
+              value={tujuanId}
+              onChange={(event) => pilihTujuan(event.target.value)}
+              className="mt-2 min-h-11 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm font-medium text-ink"
+            >
+              <option value="">Pilih halte tujuan</option>
+              {KORIDOR.map((koridor) => {
+                const daftar = daftarHalte
+                  .filter((halte) => halte.koridorId === koridor.id)
+                  .sort((a, b) => a.urutan - b.urutan);
+
+                return (
+                  <optgroup key={koridor.id} label={`${koridor.id}, ${koridor.nama}`}>
+                    {daftar.map((halte) => (
+                      <option key={halte.id} value={halte.id}>
+                        {halte.urutan}. {halte.nama}
+                      </option>
+                    ))}
+                  </optgroup>
+                );
+              })}
+            </select>
+
+            <label
+              htmlFor="cari-tujuan"
+              className="mt-3 block text-sm font-semibold text-ink"
+            >
+              Filter / ketik nama halte tujuan
             </label>
             <input
               id="cari-tujuan"
@@ -302,7 +507,7 @@ export default function RencanaPerjalananPage() {
         ) : !tujuan ? (
           <EmptyStateCard
             judul="Pilih Halte Tujuan"
-            pesan="Cari nama halte, sekolah, rumah sakit, atau pilih salah satu rute populer di atas."
+            pesan="Pilih halte tujuan dari daftar, cari nama halte, atau pilih salah satu rute populer di atas."
             catatan="Data rute memakai urutan halte operasional. Jarak jalan kaki dihitung garis lurus."
           />
         ) : tujuan.id === asal?.id ? (
@@ -318,20 +523,6 @@ export default function RencanaPerjalananPage() {
                 Pilih Tujuan Lain
               </button>
             }
-          />
-        ) : asal && tujuan.koridorId !== asal.koridorId ? (
-          <ErrorFallbackCard
-            judul="Rute ini memakai dua koridor berbeda"
-            pesan="Data publik belum memuat rute transit otomatis. Titik temu yang tersedia di data: Terminal Rawasari (K1, K2, K3) dan Pasar Keluarga (K1, K2)."
-            labelAksi="Pilih Halte Tujuan Lain"
-            onAksi={() => setTujuanId("")}
-          />
-        ) : asal && tujuan.urutan <= asal.urutan ? (
-          <ErrorFallbackCard
-            judul="Arah perjalanan belum tersedia"
-            pesan="Data publik hanya memuat urutan satu arah per koridor. Pilih halte tujuan yang urutannya lebih jauh dari halte asal."
-            labelAksi="Pilih Halte Tujuan Lain"
-            onAksi={() => setTujuanId("")}
           />
         ) : rencana && asal && tujuan ? (
           <>
@@ -351,6 +542,10 @@ export default function RencanaPerjalananPage() {
               <HonestyBadge jenis="publik" label="Urutan Halte Operasional" />
             </div>
           </>
+        ) : transit ? (
+          <TransitPlanCard rencana={transit} />
+        ) : arahBalik ? (
+          <ArahBalikCard rencana={arahBalik} />
         ) : (
           <EmptyStateCard
             judul="Jadwal Belum Tersedia"

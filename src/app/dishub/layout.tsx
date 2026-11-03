@@ -12,8 +12,8 @@ export default function DishubLayout({ children }: { children: ReactNode }) {
         Lewati ke konten
       </a>
 
-      <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex min-h-14 w-full max-w-[1440px] items-center justify-between gap-3 px-4">
+      <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
+        <div className="flex min-h-14 w-full items-center justify-between gap-3 px-4 lg:px-6">
           <Link
             href="/dishub"
             aria-label="Dashboard Dishub JAMBI JALAN"
@@ -42,26 +42,26 @@ export default function DishubLayout({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-[1440px] flex-1">
+      <div className="flex w-full flex-1">
         <aside className="hidden w-[240px] shrink-0 border-r border-line bg-surface lg:block">
-          <div className="sticky top-0">
+          <div className="sticky top-14 h-[calc(100dvh-3.5rem)] overflow-y-auto">
             <p className="px-4 pt-4 text-xs font-semibold text-ink-muted">Dashboard Dishub</p>
             <DishubNav varian="sidebar" />
           </div>
         </aside>
 
         <div className="min-w-0 flex-1">
-          <div className="border-b border-line bg-surface lg:hidden">
+          <div className="sticky top-14 z-20 border-b border-line bg-surface lg:hidden">
             <DishubNav varian="tabs" />
           </div>
-          <main id="konten" tabIndex={-1} className="mx-auto w-full max-w-[1280px] p-4 lg:p-6">
+          <main id="konten" tabIndex={-1} className="w-full flex-1 p-4 lg:p-6">
             {children}
           </main>
         </div>
       </div>
 
-      <footer className="border-t border-line bg-surface px-4 py-6 text-xs leading-relaxed text-ink-muted">
-        <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-3">
+      <footer className="border-t border-line bg-surface px-4 py-6 text-xs leading-relaxed text-ink-muted lg:px-6">
+        <div className="flex w-full flex-col gap-3">
           <p>
             JAMBI JALAN · Sistem Informasi Penumpang &amp; Evaluasi Operasional Bus Listrik Trans
             Bahagia Kota Jambi.

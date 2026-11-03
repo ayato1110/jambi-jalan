@@ -10,7 +10,7 @@ export default function PramudiLayout({ children }: { children: ReactNode }) {
         Lewati ke konten
       </a>
 
-      <header className="border-b border-pramudi-line bg-pramudi-panel">
+      <header className="sticky top-0 z-30 border-b border-pramudi-line bg-pramudi-panel">
         <div className="mx-auto flex min-h-14 w-full max-w-[560px] items-center justify-between gap-3 px-4">
           <div className="flex min-h-11 items-center gap-2">
             <span className="grid size-8 place-items-center rounded-lg bg-brand" aria-hidden="true">

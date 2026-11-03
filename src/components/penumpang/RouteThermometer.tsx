@@ -76,9 +76,26 @@ export function RouteThermometer({
     tripAcuan,
   ]);
 
-  const berikutnya = posisiAktif && posisiBus !== null ? Math.ceil(posisiBus) : null;
-  const halteBerikutnya = berikutnya ? daftarHalte.find((halte) => halte.urutan === berikutnya) : null;
-  const halteSebelumnya = berikutnya ? daftarHalte.find((halte) => halte.urutan === berikutnya - 1) : null;
+  const indeksBaruLewat =
+    posisiAktif && posisiBus !== null
+      ? Math.floor(posisiBus) === Math.ceil(posisiBus)
+        ? posisiBus - 1
+        : Math.floor(posisiBus)
+      : null;
+  const indeksBerikutnya =
+    posisiAktif && posisiBus !== null
+      ? Math.floor(posisiBus) === Math.ceil(posisiBus)
+        ? posisiBus
+        : Math.ceil(posisiBus)
+      : null;
+  const halteBerikutnya =
+    indeksBerikutnya !== null
+      ? daftarHalte.find((halte) => halte.urutan === indeksBerikutnya)
+      : null;
+  const halteSebelumnya =
+    indeksBaruLewat !== null
+      ? daftarHalte.find((halte) => halte.urutan === indeksBaruLewat)
+      : null;
 
   return (
     <section aria-labelledby="judul-urutan-halte" className="min-w-0 rounded-xl border border-line bg-surface p-4">
@@ -125,26 +142,77 @@ export function RouteThermometer({
         </p>
       ) : null}
 
-      <div className="relative mt-4">
-        <span
-          aria-hidden="true"
-          className="absolute bottom-4 left-[15px] top-4 w-1 rounded-full"
-          style={{ backgroundColor: koridor.warnaHex }}
-        />
-
+      <div className="mt-4">
         <div className="space-y-0.5">
           {daftarHalte.map((halte) => {
             const eta = etas.get(halte.urutan);
             const dipilih = halte.id === selectedHalteId;
-            const dilewati = eta?.sudahDilewati ?? false;
-            const iniBerikutnya = berikutnya === halte.urutan;
-            const statusBaris = dilewati
-              ? "Sudah dilewati"
-              : iniBerikutnya
-                ? "Bus menuju halte ini"
-                : posisiAktif
-                  ? "Halte berikutnya"
-                  : "Jadwal trip";
+            const status =
+              !posisiAktif || indeksBaruLewat === null || indeksBerikutnya === null
+                ? "D"
+                : halte.urutan < indeksBaruLewat
+                  ? "A"
+                  : halte.urutan === indeksBaruLewat && indeksBaruLewat >= 1
+                    ? "B"
+                    : halte.urutan === indeksBerikutnya
+                      ? "C"
+                      : "D";
+            const statusBaris =
+              !posisiAktif
+                ? "Jadwal trip"
+                : status === "A"
+                  ? "Sudah terlewat"
+                  : status === "B"
+                    ? "Baru saja dilewati bus"
+                    : status === "C"
+                      ? "Bus sedang menuju halte ini"
+                      : "Halte berikutnya";
+            const warnaBaris =
+              status === "B"
+                ? "border border-amber/40 bg-amber-soft/60"
+                : status === "C"
+                  ? "border border-brand bg-brand-soft"
+                  : "border border-transparent";
+            const interaksi =
+              status === "A" || status === "D" ? "hover:bg-elevated" : "";
+            const garisAtas =
+              status === "A" || status === "B"
+                ? "bg-line"
+                : status === "C"
+                  ? "bg-amber"
+                  : "";
+            const garisBawah =
+              status === "A" ? "bg-line" : status === "B" ? "bg-amber" : "";
+            const gayaGarisAtas =
+              status === "D" ? { backgroundColor: koridor.warnaHex } : undefined;
+            const gayaGarisBawah =
+              status === "C" || status === "D"
+                ? { backgroundColor: koridor.warnaHex }
+                : undefined;
+            const bulatan =
+              status === "A"
+                ? "size-3 rounded-full border-2 border-line bg-elevated"
+                : status === "B"
+                  ? "size-3.5 rounded-full border-2 border-white bg-amber ring-2 ring-amber"
+                  : status === "C"
+                    ? "size-4 rounded-full border-2 border-white bg-brand ring-2 ring-brand"
+                    : "size-3.5 rounded-full border-2 bg-surface";
+            const teksUtama =
+              status === "A"
+                ? "text-ink-muted"
+                : status === "B"
+                  ? "text-amber-deep font-semibold"
+                  : status === "C"
+                    ? "text-brand-deep font-bold"
+                    : "text-ink font-semibold";
+            const teksStatus =
+              status === "A"
+                ? "text-ink-muted"
+                : status === "B"
+                  ? "text-amber-deep"
+                  : status === "C"
+                    ? "text-brand-deep"
+                    : "text-ink-muted";
 
             return (
               <button
@@ -153,50 +221,56 @@ export function RouteThermometer({
                 onClick={() => onPilihHalte(halte.id)}
                 aria-current={dipilih ? "true" : undefined}
                 aria-label={`Halte ${halte.urutan}, ${halte.nama}. ${statusBaris}. ETA ${eta ? menitKeJam(eta.etaMenit) : "belum tersedia"}.`}
-                className={`relative z-10 flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-2 text-left ${
-                  dipilih ? "bg-brand-soft outline outline-2 outline-line-strong" : "hover:bg-elevated"
+                className={`relative z-10 flex min-h-11 w-full items-center gap-3 rounded-lg px-1 text-left ${warnaBaris} ${interaksi} ${
+                  dipilih ? "outline outline-2 outline-line-strong" : ""
                 }`}
               >
-                <span className="grid w-8 shrink-0 place-items-center">
+                <span
+                  aria-hidden="true"
+                  className="relative grid w-8 shrink-0 place-items-center self-stretch"
+                >
                   <span
-                    aria-hidden="true"
-                    className={`block rounded-full border-2 ${
-                      iniBerikutnya && posisiAktif
-                        ? "size-4 border-white bg-brand"
-                        : dipilih
-                          ? "size-4 border-line-strong bg-surface"
-                          : dilewati
-                            ? "size-3 border-line bg-canvas"
-                            : "size-3 bg-surface"
-                    }`}
+                    className={`absolute left-1/2 top-0 bottom-1/2 w-1 -translate-x-1/2 ${garisAtas}`}
+                    style={gayaGarisAtas}
+                  />
+                  <span
+                    className={`absolute left-1/2 top-1/2 bottom-0 w-1 -translate-x-1/2 ${garisBawah}`}
+                    style={gayaGarisBawah}
+                  />
+                  <span
+                    className={`relative z-10 block ${bulatan}`}
                     style={
-                      !iniBerikutnya && !dipilih && !dilewati
-                        ? { borderColor: koridor.warnaHex }
-                        : undefined
+                      status === "D" ? { borderColor: koridor.warnaHex } : undefined
                     }
                   />
                 </span>
 
                 <span className="min-w-0 flex-1">
-                  <span
-                    className={`block text-sm font-semibold leading-snug ${
-                      dilewati ? "text-ink-muted" : "text-ink"
-                    }`}
-                  >
+                  <span className={`block text-sm leading-snug ${teksUtama}`}>
                     {halte.urutan}. {halte.nama}
                   </span>
-                  <span className="block text-[0.6875rem] leading-snug text-ink-muted">
+                  <span className={`block text-[0.6875rem] leading-snug ${teksStatus}`}>
                     {statusBaris}
                   </span>
                 </span>
 
-                <span
-                  className={`shrink-0 font-mono text-sm font-semibold tabular ${
-                    dilewati ? "text-ink-muted" : "text-ink"
-                  }`}
-                >
-                  {dilewati ? "Lewat" : (eta?.etaJam ?? "--:--")}
-                </span>
+                {status === "B" ? (
+                  <span className="shrink-0 rounded border border-amber bg-amber-soft px-2 py-0.5 text-xs font-semibold text-amber-deep">
+                    Baru lewat
+                  </span>
+                ) : (
+                  <span
+                    className={`shrink-0 font-mono text-sm font-semibold tabular ${
+                      status === "C"
+                        ? "text-brand-deep font-bold"
+                        : status === "A"
+                          ? "text-ink-muted"
+                          : "text-ink"
+                    }`}
+                  >
+                    {status === "A" ? "Lewat" : (eta?.etaJam ?? "--:--")}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -205,16 +279,30 @@ export function RouteThermometer({
 
       <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t border-line pt-3 text-xs text-ink-secondary">
         <span className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="size-3 rounded-full border-2 border-line bg-canvas" />
-          Sudah dilewati
+          <span aria-hidden="true" className="size-3 rounded-full border-2 border-line bg-elevated" />
+          Sudah terlewat
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="size-3 rounded-full border-2 border-white bg-brand" />
-          Posisi bus
+          <span
+            aria-hidden="true"
+            className="size-3.5 rounded-full border-2 border-white bg-amber ring-2 ring-amber"
+          />
+          Baru saja terlewat
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="size-3 rounded-full border-2 border-line-strong bg-surface" />
-          Halte dipilih
+          <span
+            aria-hidden="true"
+            className="size-4 rounded-full border-2 border-white bg-brand ring-2 ring-brand"
+          />
+          Bus menuju halte ini
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden="true"
+            className="size-3.5 rounded-full border-2 bg-surface"
+            style={{ borderColor: koridor.warnaHex }}
+          />
+          Halte berikutnya
         </span>
       </div>
 

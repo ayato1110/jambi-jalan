@@ -76,14 +76,18 @@ export function RouteThermometer({
     tripAcuan,
   ]);
 
+  const diHalteAkhir =
+    posisiAktif && posisiBus !== null && posisiBus >= jumlahHalte;
   const indeksBaruLewat =
     posisiAktif && posisiBus !== null
-      ? Math.floor(posisiBus) === Math.ceil(posisiBus)
-        ? posisiBus - 1
-        : Math.floor(posisiBus)
+      ? diHalteAkhir
+        ? jumlahHalte
+        : Math.floor(posisiBus) === Math.ceil(posisiBus)
+          ? posisiBus - 1
+          : Math.floor(posisiBus)
       : null;
   const indeksBerikutnya =
-    posisiAktif && posisiBus !== null
+    posisiAktif && posisiBus !== null && !diHalteAkhir
       ? Math.floor(posisiBus) === Math.ceil(posisiBus)
         ? posisiBus
         : Math.ceil(posisiBus)
@@ -125,11 +129,13 @@ export function RouteThermometer({
           <span className="font-mono font-semibold tabular text-ink">{tripAcuan.berangkat}</span>{" "}
           WIB.
           {posisiAktif && posisiBus !== null
-            ? halteBerikutnya
-              ? halteSebelumnya && Math.floor(posisiBus) !== Math.ceil(posisiBus)
-                ? ` Posisi bus antara ${halteSebelumnya.nama} dan ${halteBerikutnya.nama}.`
-                : ` Posisi bus di ${halteBerikutnya.nama}.`
-              : ""
+            ? diHalteAkhir && halteSebelumnya
+              ? ` Bus tiba di ${halteSebelumnya.nama}.`
+              : halteBerikutnya
+                ? halteSebelumnya && Math.floor(posisiBus) !== Math.ceil(posisiBus)
+                  ? ` Posisi bus antara ${halteSebelumnya.nama} dan ${halteBerikutnya.nama}.`
+                  : ` Posisi bus di ${halteBerikutnya.nama}.`
+                : ""
             : " ETA memakai jadwal statis karena belum ada trip aktif."}
         </p>
       ) : (
@@ -148,7 +154,7 @@ export function RouteThermometer({
             const eta = etas.get(halte.urutan);
             const dipilih = halte.id === selectedHalteId;
             const status =
-              !posisiAktif || indeksBaruLewat === null || indeksBerikutnya === null
+              !posisiAktif || indeksBaruLewat === null
                 ? "D"
                 : halte.urutan < indeksBaruLewat
                   ? "A"
@@ -157,8 +163,12 @@ export function RouteThermometer({
                     : halte.urutan === indeksBerikutnya
                       ? "C"
                       : "D";
-            const statusBaris =
-              !posisiAktif
+            const barisPertama = halte.urutan === 1;
+            const barisTerakhir = halte.urutan === jumlahHalte;
+            const tibaDiAkhir = diHalteAkhir && barisTerakhir;
+            const statusBaris = tibaDiAkhir
+              ? "Tiba di halte akhir"
+              : !posisiAktif
                 ? "Jadwal trip"
                 : status === "A"
                   ? "Sudah terlewat"
@@ -167,46 +177,67 @@ export function RouteThermometer({
                     : status === "C"
                       ? "Bus sedang menuju halte ini"
                       : "Halte berikutnya";
-            const warnaBaris =
-              status === "B"
+            const warnaBaris = tibaDiAkhir
+              ? "border border-line bg-elevated"
+              : status === "B"
                 ? "border border-amber/40 bg-amber-soft/60"
                 : status === "C"
                   ? "border border-brand bg-brand-soft"
                   : "border border-transparent";
-            const interaksi =
-              status === "A" || status === "D" ? "hover:bg-elevated" : "";
-            const garisAtas =
-              status === "A" || status === "B"
+            const interaksi = tibaDiAkhir
+              ? "hover:bg-elevated"
+              : status === "A" || status === "D"
+                ? "hover:bg-elevated"
+                : "";
+            const garisAtas = barisPertama
+              ? ""
+              : tibaDiAkhir
                 ? "bg-line"
-                : status === "C"
+                : status === "A" || status === "B"
+                  ? "bg-line"
+                  : status === "C"
+                    ? "bg-amber"
+                    : "";
+            const garisBawah = barisTerakhir
+              ? ""
+              : status === "A"
+                ? "bg-line"
+                : status === "B"
                   ? "bg-amber"
                   : "";
-            const garisBawah =
-              status === "A" ? "bg-line" : status === "B" ? "bg-amber" : "";
             const gayaGarisAtas =
-              status === "D" ? { backgroundColor: koridor.warnaHex } : undefined;
+              barisPertama || tibaDiAkhir
+                ? undefined
+                : status === "D"
+                  ? { backgroundColor: koridor.warnaHex }
+                  : undefined;
             const gayaGarisBawah =
-              status === "C" || status === "D"
-                ? { backgroundColor: koridor.warnaHex }
-                : undefined;
-            const bulatan =
-              status === "A"
+              barisTerakhir
+                ? undefined
+                : status === "C" || status === "D"
+                  ? { backgroundColor: koridor.warnaHex }
+                  : undefined;
+            const bulatan = tibaDiAkhir
+              ? "size-4 rounded-full border-2 border-brand bg-surface"
+              : status === "A"
                 ? "size-3 rounded-full border-2 border-line bg-elevated"
                 : status === "B"
                   ? "size-3.5 rounded-full border-2 border-white bg-amber ring-2 ring-amber"
                   : status === "C"
                     ? "size-4 rounded-full border-2 border-white bg-brand ring-2 ring-brand"
                     : "size-3.5 rounded-full border-2 bg-surface";
-            const teksUtama =
-              status === "A"
+            const teksUtama = tibaDiAkhir
+              ? "text-ink font-semibold"
+              : status === "A"
                 ? "text-ink-muted"
                 : status === "B"
                   ? "text-amber-deep font-semibold"
                   : status === "C"
                     ? "text-brand-deep font-bold"
                     : "text-ink font-semibold";
-            const teksStatus =
-              status === "A"
+            const teksStatus = tibaDiAkhir
+              ? "text-ink-muted"
+              : status === "A"
                 ? "text-ink-muted"
                 : status === "B"
                   ? "text-amber-deep"
@@ -220,7 +251,7 @@ export function RouteThermometer({
                 type="button"
                 onClick={() => onPilihHalte(halte.id)}
                 aria-current={dipilih ? "true" : undefined}
-                aria-label={`Halte ${halte.urutan}, ${halte.nama}. ${statusBaris}. ETA ${eta ? menitKeJam(eta.etaMenit) : "belum tersedia"}.`}
+                aria-label={`Halte ${halte.urutan}, ${halte.nama}. ${statusBaris}.${tibaDiAkhir ? "" : ` ETA ${eta ? menitKeJam(eta.etaMenit) : "belum tersedia"}.`}`}
                 className={`relative z-10 flex min-h-11 w-full items-center gap-3 rounded-lg px-1 text-left ${warnaBaris} ${interaksi} ${
                   dipilih ? "outline outline-2 outline-line-strong" : ""
                 }`}
@@ -254,7 +285,7 @@ export function RouteThermometer({
                   </span>
                 </span>
 
-                {status === "B" ? (
+                {status === "B" && !tibaDiAkhir ? (
                   <span className="shrink-0 rounded border border-amber bg-amber-soft px-2 py-0.5 text-xs font-semibold text-amber-deep">
                     Baru lewat
                   </span>
@@ -268,7 +299,7 @@ export function RouteThermometer({
                           : "text-ink"
                     }`}
                   >
-                    {status === "A" ? "Lewat" : (eta?.etaJam ?? "--:--")}
+                    {tibaDiAkhir ? "Tiba" : status === "A" ? "Lewat" : (eta?.etaJam ?? "--:--")}
                   </span>
                 )}
               </button>

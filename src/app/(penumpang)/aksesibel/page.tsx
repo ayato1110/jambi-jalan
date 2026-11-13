@@ -66,15 +66,15 @@ export default function AksesibelPage() {
   const [pesan, setPesan] = useState<string | null>(null);
   const didukung = useSyncExternalStore(langgananKosong, dukunganSuara, () => true);
 
-  const ujiSuara = () => {
-    const berhasil = bacaTeks(
+  const ujiSuara = async () => {
+    const berhasil = await bacaTeks(
       "Pratinjau mode aksesibel. Trip berikutnya pukul tujuh pagi. Sekitar sepuluh menit lagi. Perkiraan kondisi bus padat.",
       { onSelesai: () => setPesan(null) },
     );
     setPesan(
       berhasil
-        ? "Pembaca suara sedang membacakan pratinjau."
-        : "Pembaca suara tidak dapat dijalankan di peramban ini.",
+        ? "Pembaca suara Bahasa Indonesia sedang membacakan pratinjau."
+        : "Suara Bahasa Indonesia belum tersedia. Pasang paket suara Indonesia di perangkat atau gunakan Microsoft Edge.",
     );
   };
 
@@ -151,6 +151,11 @@ export default function AksesibelPage() {
               kontras tetap dapat digunakan.
             </p>
           ) : null}
+          <p className="mt-2 text-xs leading-relaxed text-ink-muted">
+            Suara memakai voice Bahasa Indonesia dari perangkat. Bila belum tersedia, aplikasi
+            memakai suara cadangan eSpeak offline. Untuk suara paling natural, pasang paket suara
+            Bahasa Indonesia atau gunakan Microsoft Edge.
+          </p>
           {pesan ? (
             <p role="status" className="mt-2 text-xs leading-relaxed text-ink-muted">
               {pesan}

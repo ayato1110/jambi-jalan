@@ -176,10 +176,10 @@ export default function BerandaJadwalPage() {
 
   const tampilPapan = Boolean(halte && berikutnya && status.aktif && !status.besok);
 
-  const bacakanJadwal = useCallback(() => {
+  const bacakanJadwal = useCallback(async () => {
     if (!dukunganSuara()) {
       setPesanSuara(
-        "Perangkat ini belum mendukung pembaca suara otomatis. Gunakan tombol A+ untuk teks besar.",
+        "Suara Bahasa Indonesia belum tersedia. Pasang paket suara Indonesia di perangkat atau gunakan Microsoft Edge.",
       );
       return;
     }
@@ -201,11 +201,11 @@ export default function BerandaJadwalPage() {
       .filter(Boolean)
       .join(" ");
 
-    const berhasil = bacaTeks(kalimat, { onSelesai: () => setPesanSuara(null) });
+    const berhasil = await bacaTeks(kalimat, { onSelesai: () => setPesanSuara(null) });
     setPesanSuara(
       berhasil
         ? "Pembaca suara Bahasa Indonesia sedang membacakan jadwal."
-        : "Pembaca suara tidak dapat dijalankan di peramban ini.",
+        : "Suara Bahasa Indonesia belum tersedia. Pasang paket suara Indonesia di perangkat atau gunakan Microsoft Edge.",
     );
   }, [berikutnya, halte, koridor, labelKeyakinan, terakhir]);
 

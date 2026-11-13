@@ -139,18 +139,18 @@ export default function PanduanTapPage() {
     }
   };
 
-  const bacakan = () => {
+  const bacakan = async () => {
     const kalimat = [
       `Panduan ${panduan.judul}.`,
       ...panduan.langkah.map((langkah, i) => `Langkah ${i + 1}. ${langkah}`),
       panduan.catatan,
     ].join(" ");
 
-    const berhasil = bacaTeks(kalimat, { onSelesai: () => setPesan(null) });
+    const berhasil = await bacaTeks(kalimat, { onSelesai: () => setPesan(null) });
     setPesan(
       berhasil
-        ? "Pembaca suara sedang membacakan panduan."
-        : "Pembaca suara tidak dapat dijalankan di peramban ini.",
+        ? "Pembaca suara Bahasa Indonesia sedang membacakan panduan."
+        : "Suara Bahasa Indonesia belum tersedia. Pasang paket suara Indonesia di perangkat atau gunakan Microsoft Edge.",
     );
   };
 

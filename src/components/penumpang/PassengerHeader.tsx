@@ -50,7 +50,7 @@ export function PassengerHeader() {
       return;
     }
 
-    bacaTeks("Mode teks besar aktif. Buka halaman Jadwal untuk mendengar informasi trip.");
+    void bacaTeks("Mode teks besar aktif. Buka halaman Jadwal untuk mendengar informasi trip.");
   };
 
   return (

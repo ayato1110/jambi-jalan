@@ -153,8 +153,8 @@ export default function AksesibelPage() {
           ) : null}
           <p className="mt-2 text-xs leading-relaxed text-ink-muted">
             Suara memakai voice Bahasa Indonesia dari perangkat. Bila belum tersedia, aplikasi
-            memakai suara cadangan eSpeak offline. Untuk suara paling natural, pasang paket suara
-            Bahasa Indonesia atau gunakan Microsoft Edge.
+            mencoba suara Google online, lalu eSpeak offline sebagai cadangan. Untuk suara paling
+            natural dan stabil, pasang paket suara Bahasa Indonesia atau gunakan Microsoft Edge.
           </p>
           {pesan ? (
             <p role="status" className="mt-2 text-xs leading-relaxed text-ink-muted">

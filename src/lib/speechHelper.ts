@@ -216,6 +216,87 @@ function pilihSuaraEspeak(mesin: MesinEspeak): Promise<SuaraEspeak | null> {
   });
 }
 
+function potongTeks(teks: string, maks: number): string[] {
+  const hasil: string[] = [];
+  let sisa = teks.trim();
+
+  while (sisa.length > maks) {
+    let potong = sisa.lastIndexOf(" ", maks);
+    if (potong < Math.floor(maks * 0.6)) potong = maks;
+    const bagian = sisa.slice(0, potong).trim();
+    if (bagian) hasil.push(bagian);
+    sisa = sisa.slice(potong).trim();
+  }
+
+  if (sisa) hasil.push(sisa);
+  return hasil;
+}
+
+async function bacaDenganGoogle(
+  teks: string,
+  opsi: OpsiBacaSuara,
+  idGenerasi: number,
+): Promise<boolean> {
+  const potongan = potongTeks(teks, 190);
+  if (potongan.length === 0) return false;
+
+  const konteks = siapkanAudio();
+  if (!konteks) return false;
+
+  try {
+    const buffers = await Promise.all(
+      potongan.map(async (bagian) => {
+        const respons = await fetch(`/api/tts?text=${encodeURIComponent(bagian)}`);
+        if (!respons.ok) throw new Error("Google TTS gagal");
+        const data = await respons.arrayBuffer();
+        return await konteks.decodeAudioData(data.slice(0));
+      }),
+    );
+
+    if (idGenerasi !== generasi) return false;
+
+    let indeks = 0;
+    let selesaiAwal: ((berhasil: boolean) => void) | null = null;
+    const awal = new Promise<boolean>((resolve) => {
+      selesaiAwal = resolve;
+    });
+
+    const lanjut = () => {
+      if (idGenerasi !== generasi) {
+        selesaiAwal?.(false);
+        return;
+      }
+
+      const buffer = buffers[indeks];
+      indeks += 1;
+      if (!buffer) {
+        opsi.onSelesai?.();
+        return;
+      }
+
+      const sumber = konteks.createBufferSource();
+      sumber.buffer = buffer;
+      sumber.connect(konteks.destination);
+      sumber.onended = () => {
+        if (sumberAudio === sumber) sumberAudio = null;
+        lanjut();
+      };
+      sumberAudio = sumber;
+      sumber.start();
+
+      if (indeks === 1) {
+        selesaiAwal?.(true);
+        selesaiAwal = null;
+      }
+    };
+
+    lanjut();
+    return await awal;
+  } catch {
+    return false;
+  }
+}
+
 function bacaDenganEspeak(
   teks: string,
   opsi: OpsiBacaSuara,
@@ -300,6 +381,10 @@ export async function bacaTeks(teks: string, opsi: OpsiBacaSuara = {}): Promise<
     window.speechSynthesis.cancel();
     if (idGenerasi !== generasi) return false;
   }
+
+  const google = await bacaDenganGoogle(isi, opsi, idGenerasi);
+  if (google) return true;
+  if (idGenerasi !== generasi) return false;
 
   return bacaDenganEspeak(isi, opsi, idGenerasi);
 }

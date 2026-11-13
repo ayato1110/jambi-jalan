@@ -6,6 +6,7 @@ import { ARMADA_LENGKAP } from "@/data/armada";
 import { JADWAL_MAP } from "@/data/jadwal";
 import { KORIDOR_MAP } from "@/data/koridor";
 import { evaluasiKeyakinan } from "@/lib/confidenceEngine";
+import { useGpsPramudi } from "@/lib/useGpsPramudi";
 import { useSimClock } from "@/lib/useSimClock";
 import { useJambiJalanStore } from "@/store/useJambiJalanStore";
 
@@ -74,9 +75,11 @@ export default function PanelTripPage() {
   const akhiriTrip = useJambiJalanStore((state) => state.akhiriTrip);
   const setSinyalDiputus = useJambiJalanStore((state) => state.setSinyalDiputus);
   const setJamSimulasiMenit = useJambiJalanStore((state) => state.setJamSimulasiMenit);
+  const perbaruiPosisiGps = useJambiJalanStore((state) => state.perbaruiPosisiGps);
 
   const jam = useSimClock(jamSimulasiMenit);
   const [autoMove, setAutoMove] = useState(false);
+  const [gpsIngin, setGpsIngin] = useState(false);
   const [jumlahPing, setJumlahPing] = useState(0);
   const [pesanDemo, setPesanDemo] = useState<string | null>(null);
 
@@ -90,6 +93,25 @@ export default function PanelTripPage() {
   const koridor = trip ? KORIDOR_MAP[trip.koridorId] : null;
   const berjalan = Boolean(aktif);
   const sinyalPutus = aktif?.sinyalDiputusSimulasi ?? false;
+
+  const gps = useGpsPramudi({
+    busId: unit?.id ?? "",
+    aktif: Boolean(berjalan && gpsIngin),
+    onPosisi: (posisiGps) => {
+      if (unit) perbaruiPosisiGps(unit.id, posisiGps);
+    },
+  });
+
+  const teksGps =
+    gps.status === "aktif"
+      ? `GPS aktif${gps.akurasi === null ? "" : `, akurasi sekitar ${gps.akurasi} meter`}.`
+      : gps.status === "meminta-izin"
+        ? "Menunggu izin lokasi dari perangkat."
+        : gps.status === "ditolak"
+          ? "Izin lokasi ditolak. Gunakan simulasi atau izinkan lokasi di browser."
+          : gps.status === "tidak-tersedia"
+            ? "GPS tidak tersedia. Gunakan simulasi."
+            : "Menunggu izin lokasi dari perangkat.";
 
   const halteKoridor = trip
     ? daftarHalte
@@ -111,7 +133,7 @@ export default function PanelTripPage() {
       : null;
 
   useEffect(() => {
-    if (!unit || !berjalan) return;
+    if (!unit || !berjalan || gpsIngin) return;
 
     const interval = window.setInterval(() => {
       const state = useJambiJalanStore.getState();
@@ -129,7 +151,7 @@ export default function PanelTripPage() {
     }, autoMove ? 1_200 : 10_000);
 
     return () => window.clearInterval(interval);
-  }, [autoMove, berjalan, unit]);
+  }, [autoMove, berjalan, gpsIngin, unit]);
 
   const mulai = () => {
     if (!unit || !tripTerpilih) return;
@@ -142,6 +164,7 @@ export default function PanelTripPage() {
       tripId: tripTerpilih.id,
     });
     setAutoMove(false);
+    setGpsIngin(false);
     setJumlahPing(1);
     setPesanDemo(null);
   };
@@ -150,11 +173,14 @@ export default function PanelTripPage() {
     if (!unit) return;
     akhiriTrip(unit.id);
     setAutoMove(false);
+    setGpsIngin(false);
     setPesanDemo("Trip diakhiri. Posisi terakhir tetap tersimpan.");
   };
 
   const jalankanDemo = () => {
     if (!unit || !tripTerpilih) return;
+
+    setGpsIngin(false);
 
     if (!berjalan) {
       const [jamBerangkat, menitBerangkat] = tripTerpilih.berangkat.split(":").map(Number);
@@ -315,6 +341,31 @@ export default function PanelTripPage() {
             </dd>
           </div>
         </dl>
+
+        <div className="mt-3 border-t border-pramudi-line">
+          <SaklarDemo
+            id="gps-perangkat"
+            label="Gunakan GPS perangkat"
+            deskripsi="Membaca lokasi asli perangkat. Butuh izin lokasi dan hanya memperbarui perangkat ini."
+            checked={gpsIngin}
+            onUbah={(aktif) => {
+              setGpsIngin(aktif);
+              if (aktif) setAutoMove(false);
+            }}
+            disabled={!berjalan}
+          />
+          {gpsIngin ? (
+            <p
+              role="status"
+              className={`pb-3 text-xs leading-relaxed ${
+                gps.status === "aktif" ? "text-pramudi-live" : "text-pramudi-amber"
+              }`}
+            >
+              {teksGps}
+            </p>
+          ) : null}
+        </div>
+
         <p className="mt-2 text-xs leading-relaxed text-pramudi-muted">
           Ping dikirim setiap 10 detik saat trip normal. Mode demo mempercepat pembaruan.
           Badge penumpang berubah menjadi perkiraan jadwal bila ping tidak diterima lebih dari 20
@@ -327,7 +378,7 @@ export default function PanelTripPage() {
           <h2 id="judul-demo" className="text-sm font-semibold text-pramudi-text">
             Simulasi Uji Lapangan
           </h2>
-          <span className="rounded border border-pramudi-amber px-2 py-0.5 text-[0.625rem] font-semibold text-pramudi-amber">
+          <span className="rounded border border-pramudi-amber px-2 py-0.5 text-[0.6875rem] font-semibold text-pramudi-amber">
             Uji Lapangan
           </span>
         </div>
@@ -354,7 +405,7 @@ export default function PanelTripPage() {
             deskripsi="Menggeser posisi bus sepanjang rute jalan, sekitar 75 detik per koridor."
             checked={autoMove}
             onUbah={setAutoMove}
-            disabled={!berjalan}
+            disabled={!berjalan || gpsIngin}
           />
           <SaklarDemo
             id="sinyal-putus"

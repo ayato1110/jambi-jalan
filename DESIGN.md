@@ -87,9 +87,9 @@ Menggunakan maksimal **2 warna inti + 1 aksen peringatan** di atas kanvas netral
 ## 5. Tipografi & Skala Ukuran
 
 ### 5.1 Pemilihan Huruf (Alasan R-06 & R-31)
-- **UI & Bacaan Utama (`--font-sans`):** `Plus Jakarta Sans` (fallback: `system-ui, -apple-system, sans-serif`).
+- **UI & Bacaan Utama (`--font-sans`):** `Public Sans` (fallback: `system-ui, -apple-system, sans-serif`).
   - *Alasan:* Memiliki bukaan huruf (*aperture*) lebar dan tinggi huruf kecil (*x-height*) yang besar sehingga nama jalan dan nama toko/halte di Kota Jambi tetap terbaca jelas pada ukuran kecil maupun saat diperbesar untuk lansia.
-- **Angka Jadwal, Hitung Mundur, & Rumus Simulator (`--font-mono`):** `JetBrains Mono` atau `Geist Mono` dengan `font-variant-numeric: tabular-nums`.
+- **Angka Jadwal, Hitung Mundur, & Rumus Simulator (`--font-mono`):** `IBM Plex Mono` dengan `font-variant-numeric: tabular-nums`.
   - *Alasan:* Hanya dipakai pada jam (`05:30`), hitung mundur (`14 mnt`), koordinat GPS, dan angka rupiah simulator agar lebar digit tidak bergeser saat angka berubah setiap detik. **Dilarang** memakai font monospace untuk judul halaman.
 
 ### 5.2 Skala Ukuran Tetap (Operate Mode) & Mode Teks Besar Lansia (F-05)
@@ -138,6 +138,6 @@ Prinsip utama: **Layar mobile adalah desain asli untuk Penumpang dan Pramudi, bu
 
 1. **Mengapa warna kanvas `#F6F5F0` dan hijau `#0F766E`?** Karena penumpang membaca layar di halte luar ruang yang terik sehingga butuh latar terang yang tidak menyilaukan, sedangkan hijau `#0F766E` merepresentasikan armada bus listrik Trans Bahagia dengan kontras teks putih yang lolos WCAG AA.
 2. **Mengapa layar utama dimulai dari Kartu Papan Keberangkatan, bukan peta layar penuh?** Karena bus Trans Bahagia hanya berangkat 8 kali sehari dari Terminal Rawasari, sehingga kepastian jam keberangkatan berikutnya jauh lebih mendesak daripada melihat peta kosong saat bus belum jalan.
-3. **Mengapa memakai `Plus Jakarta Sans` + angka `tabular-nums`?** Agar nama halte yang panjang mudah dipindai oleh semua kelompok usia, dan angka hitung mundur detik/menit tidak bergoyang kiri-kanan saat berkurang.
+3. **Mengapa memakai `Public Sans` + angka `tabular-nums`?** Public Sans berasal dari kebutuhan layanan publik, punya aperture terbuka dan bentuk huruf yang mudah dipindai untuk nama halte panjang. IBM Plex Mono menjaga angka hitung mundur detik/menit tidak bergoyang kiri-kanan saat berubah.
 4. **Mengapa daftar halte memakai garis vertikal terhubung, bukan grid kartu?** Karena urutan titik pemberhentian dalam satu koridor bersifat sekuensial dari asal ke tujuan; garis terhubung langsung menunjukkan arah perjalanan dan posisi bus relatif terhadap halte penumpang.
 5. **Mengapa tombol Mode Aksesibel (`A+ & Suara`) ditaruh langsung di header atas beranda?** Agar lansia atau pendampingnya tidak perlu masuk ke menu berlapis-lapis terlebih dahulu hanya untuk memperbesar huruf dan mendengarkan jadwal.

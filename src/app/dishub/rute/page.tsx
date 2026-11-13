@@ -448,7 +448,7 @@ export default function KelolaRutePage() {
                   <tr key={halte.id}>
                     <td className="p-3 align-top font-mono tabular text-ink-secondary">
                       {halte.urutan}
-                      <span className="block text-[0.625rem] text-ink-muted">{halte.id}</span>
+                      <span className="block text-[0.6875rem] text-ink-muted">{halte.id}</span>
                     </td>
                     <td className="p-3 align-top font-medium text-ink">{halte.nama}</td>
                     <td className="p-3 align-top text-ink-secondary">

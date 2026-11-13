@@ -118,7 +118,7 @@ export default function PilihPenugasanPage() {
                   <span className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-semibold text-pramudi-text">{item.nama}</span>
                     {sedangAktif ? (
-                      <span className="rounded border border-pramudi-amber px-1.5 py-0.5 text-[0.625rem] font-semibold text-pramudi-amber">
+                      <span className="rounded border border-pramudi-amber px-1.5 py-0.5 text-[0.6875rem] font-semibold text-pramudi-amber">
                         Aktif
                       </span>
                     ) : null}
@@ -154,7 +154,7 @@ export default function PilihPenugasanPage() {
                   <span className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-semibold text-pramudi-text">{item.nama}</span>
                     {sedangAktif ? (
-                      <span className="rounded border border-pramudi-amber px-1.5 py-0.5 text-[0.625rem] font-semibold text-pramudi-amber">
+                      <span className="rounded border border-pramudi-amber px-1.5 py-0.5 text-[0.6875rem] font-semibold text-pramudi-amber">
                         Aktif
                       </span>
                     ) : null}
@@ -242,7 +242,7 @@ export default function PilihPenugasanPage() {
                     <span className="mt-0.5 block text-xs text-pramudi-subtext">
                       Trip {item.nomorTrip}, tiba {item.tiba}
                     </span>
-                    <span className="mt-1 block text-[0.625rem] text-pramudi-muted">
+                    <span className="mt-1 block text-[0.6875rem] text-pramudi-muted">
                       {item.kepenuhan}
                       {item.catatanWaktu ? ", 2 versi waktu" : ""}
                     </span>

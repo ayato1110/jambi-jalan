@@ -45,7 +45,7 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
   ],
   K2: [
     "Terminal Alam Barajo",
-    "Jalan Palang",
+    "Jalan Pelangi",
     "PT United Tractors",
     "Linda Fashion",
     "Sanjaya Ban",
@@ -68,7 +68,7 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Jalan Batam",
     "Indomaret SMPN 5",
     "Hotel Aston",
-    "Lappindo",
+    "Leppindo",
     "Murni",
     "Benteng",
     "Masjid Agung Al Falah",

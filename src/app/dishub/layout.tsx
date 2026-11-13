@@ -28,7 +28,7 @@ export default function DishubLayout({ children }: { children: ReactNode }) {
               </svg>
             </span>
             <span className="text-sm font-extrabold tracking-tight text-ink">JAMBI JALAN</span>
-            <span className="hidden rounded bg-elevated px-2 py-0.5 text-[0.625rem] font-semibold text-ink-secondary min-[420px]:inline">
+            <span className="hidden rounded bg-elevated px-2 py-0.5 text-[0.6875rem] font-semibold text-ink-secondary min-[420px]:inline">
               DISHUB
             </span>
           </Link>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CorridorPicker } from "@/components/penumpang/CorridorPicker";
+import { MiniCorridorMap } from "@/components/penumpang/MiniCorridorMap";
 import { DepartureBoardCard } from "@/components/penumpang/DepartureBoardCard";
 import { SimClockBar } from "@/components/penumpang/SimClockBar";
 import { EmptyStateCard } from "@/components/ui/EmptyStateCard";
@@ -279,7 +280,8 @@ export default function BerandaJadwalPage() {
         ) : null}
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
-          <section aria-label="Pilih perjalanan" className="rounded-xl border border-line bg-surface p-4">
+          <div className="min-w-0 space-y-4">
+            <section aria-label="Pilih perjalanan" className="rounded-xl border border-line bg-surface p-4">
           <CorridorPicker nilai={koridorAktif} onUbah={setKoridorAktif} />
 
           <div className="mt-4">
@@ -313,6 +315,13 @@ export default function BerandaJadwalPage() {
             </div>
           </div>
         </section>
+
+            <MiniCorridorMap
+              koridor={koridor}
+              daftarHalte={halteKoridor}
+              armadaAktif={armadaBerjalan}
+            />
+          </div>
 
           <div className="min-w-0 space-y-4">
             {!jam.siap ? (

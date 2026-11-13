@@ -37,7 +37,7 @@ function BarisPerbandingan({
       </div>
       <div className="mt-2 space-y-1" aria-hidden="true">
         <div className="flex items-center gap-2">
-          <span className="w-14 shrink-0 text-[0.625rem] font-medium text-ink-muted">Saat ini</span>
+          <span className="w-14 shrink-0 text-[0.6875rem] font-medium text-ink-muted">Saat ini</span>
           <span className="h-2 flex-1 rounded-full bg-elevated">
             <span
               className="block h-2 rounded-full bg-ink/45"
@@ -46,7 +46,7 @@ function BarisPerbandingan({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-14 shrink-0 text-[0.625rem] font-medium text-brand-deep">Simulasi</span>
+          <span className="w-14 shrink-0 text-[0.6875rem] font-medium text-brand-deep">Simulasi</span>
           <span className="h-2 flex-1 rounded-full bg-brand-soft">
             <span
               className="block h-2 rounded-full bg-brand"

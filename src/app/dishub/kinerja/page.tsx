@@ -91,13 +91,13 @@ export default function KinerjaPage() {
             className="absolute inset-x-0 border-t-2 border-dashed border-danger"
             style={{ bottom: "80%" }}
           >
-            <span className="absolute -top-5 right-0 rounded bg-surface px-1 text-[0.625rem] font-semibold text-danger-deep">
+            <span className="absolute -top-5 right-0 rounded bg-surface px-1 text-[0.6875rem] font-semibold text-danger-deep">
               Ambang 80%
             </span>
           </div>
         </div>
 
-        <div className="mt-2 grid grid-cols-8 gap-1 text-center text-[0.625rem] leading-tight">
+        <div className="mt-2 grid grid-cols-8 gap-1 text-center text-[0.6875rem] leading-tight">
           {daftarTrip.map((trip, indeks) => (
             <div key={trip.id}>
               <span

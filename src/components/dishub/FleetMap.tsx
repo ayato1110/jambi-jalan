@@ -11,6 +11,7 @@ import type {
 import { SkeletonBlock } from "@/components/ui/SkeletonBlock";
 import { KORIDOR, KORIDOR_MAP } from "@/data/koridor";
 import { RUTE_JALAN } from "@/data/ruteJalan";
+import { geserMarker } from "@/lib/animasiPeta";
 import type { Halte, StatusArmadaAktif } from "@/lib/types";
 
 type ModulPeta = typeof import("maplibre-gl");
@@ -46,7 +47,7 @@ export function FleetMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const modulRef = useRef<ModulPeta | null>(null);
-  const busMarkersRef = useRef<MapLibreMarker[]>([]);
+  const busMarkersRef = useRef<Map<string, MapLibreMarker>>(new Map());
   const [siap, setSiap] = useState(false);
   const [gagal, setGagal] = useState(false);
   const [percobaan, setPercobaan] = useState(0);
@@ -152,7 +153,7 @@ export function FleetMap({
     return () => {
       dibatalkan = true;
       window.clearTimeout(batasWaktu);
-      busMarkersRef.current = [];
+      busMarkersRef.current = new Map();
       mapRef.current?.remove();
       mapRef.current = null;
       modulRef.current = null;
@@ -167,11 +168,22 @@ export function FleetMap({
     const maplibregl = modulRef.current;
     if (!map || !maplibregl) return;
 
-    for (const marker of busMarkersRef.current) marker.remove();
-    busMarkersRef.current = [];
+    const aktif = armadaAktif.filter((armada) => armada.statusTrip === "berjalan");
+    const idAktif = new Set(aktif.map((armada) => armada.busId));
 
-    for (const armada of armadaAktif) {
-      if (armada.statusTrip !== "berjalan") continue;
+    for (const [busId, marker] of busMarkersRef.current) {
+      if (!idAktif.has(busId)) {
+        marker.remove();
+        busMarkersRef.current.delete(busId);
+      }
+    }
+
+    for (const armada of aktif) {
+      const markerLama = busMarkersRef.current.get(armada.busId);
+      if (markerLama) {
+        geserMarker(markerLama, [armada.lng, armada.lat]);
+        continue;
+      }
 
       const koridor = KORIDOR_MAP[armada.koridorId];
       const elemen = document.createElement("div");
@@ -184,7 +196,7 @@ export function FleetMap({
       const marker = new maplibregl.Marker({ element: elemen, anchor: "center" })
         .setLngLat([armada.lng, armada.lat])
         .addTo(map);
-      busMarkersRef.current.push(marker);
+      busMarkersRef.current.set(armada.busId, marker);
     }
   }, [armadaAktif, siap]);
 

@@ -155,7 +155,7 @@ export default function PanduanTapPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[560px] px-4 pt-6">
+    <div className="mx-auto w-full max-w-[720px] px-4 pt-6">
       <header className="mb-4">
         <p className="text-xs font-semibold text-brand-deep">Panduan Tap</p>
         <h1 className="mt-1 text-[1.375rem] font-bold leading-tight text-ink">

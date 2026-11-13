@@ -90,3 +90,28 @@ export function posisiDiRute(
     lat: titikSebelum[1] + (titik[1] - titikSebelum[1]) * rasio,
   };
 }
+
+export function cariIndeksHalteTerdekat(
+  koridorId: KoridorId,
+  lat: number,
+  lng: number,
+): number {
+  const rute = RUTE_JALAN[koridorId];
+  if (!rute || rute.jarakHalteM.length === 0) return 1;
+
+  let terdekat = 1;
+  let jarakTerdekat = Infinity;
+
+  for (let indeks = 1; indeks <= rute.jarakHalteM.length; indeks += 1) {
+    const titik = posisiDiRute(koridorId, indeks);
+    if (!titik) continue;
+
+    const jarak = (titik.lat - lat) ** 2 + (titik.lng - lng) ** 2;
+    if (jarak < jarakTerdekat) {
+      jarakTerdekat = jarak;
+      terdekat = indeks;
+    }
+  }
+
+  return terdekat;
+}

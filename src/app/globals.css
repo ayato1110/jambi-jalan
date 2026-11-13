@@ -88,8 +88,8 @@
   --color-pramudi-danger: var(--pramudi-danger);
   --color-pramudi-amber: var(--pramudi-amber);
 
-  --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-sans: var(--font-public-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SFMono-Regular", monospace;
 
   --radius-card: 12px;
   --radius-control: 8px;
@@ -118,7 +118,7 @@ html.kontras-tinggi {
 body {
   background: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-public-sans), system-ui, -apple-system, sans-serif;
   line-height: 1.5;
 }
 
@@ -212,7 +212,7 @@ body {
   border-radius: 8px;
   background: var(--bg-board);
   color: #ffffff;
-  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
   font-size: 0.625rem;
   font-weight: 700;
   box-shadow: 0 0 0 2px var(--border-strong);

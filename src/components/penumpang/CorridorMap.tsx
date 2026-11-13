@@ -11,12 +11,13 @@ import type {
 } from "maplibre-gl";
 import { SkeletonBlock } from "@/components/ui/SkeletonBlock";
 import { RUTE_JALAN } from "@/data/ruteJalan";
+import { geserMarker } from "@/lib/animasiPeta";
 import { posisiDiRute } from "@/lib/routeJalan";
 import type { Halte, Koridor, StatusArmadaAktif } from "@/lib/types";
 
 type ModulPeta = typeof import("maplibre-gl");
 
-const GAYA_OSM: StyleSpecification = {
+export const GAYA_OSM: StyleSpecification = {
   version: 8,
   sources: {
     osm: {
@@ -54,6 +55,7 @@ export function CorridorMap({
   const mapRef = useRef<MapLibreMap | null>(null);
   const modulRef = useRef<ModulPeta | null>(null);
   const busMarkerRef = useRef<MapLibreMarker | null>(null);
+  const busMarkerBusIdRef = useRef<string | null>(null);
   const onPilihRef = useRef(onPilihHalte);
   const selectedRef = useRef(selectedHalteId);
   const daftarRef = useRef(daftarHalte);
@@ -240,6 +242,7 @@ export function CorridorMap({
       dibatalkan = true;
       window.clearTimeout(batasWaktu);
       busMarkerRef.current = null;
+      busMarkerBusIdRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
       modulRef.current = null;
@@ -254,10 +257,20 @@ export function CorridorMap({
     const maplibregl = modulRef.current;
     if (!map || !maplibregl) return;
 
+    if (!armadaAktif) {
+      busMarkerRef.current?.remove();
+      busMarkerRef.current = null;
+      busMarkerBusIdRef.current = null;
+      return;
+    }
+
+    if (busMarkerRef.current && busMarkerBusIdRef.current === armadaAktif.busId) {
+      geserMarker(busMarkerRef.current, [armadaAktif.lng, armadaAktif.lat]);
+      return;
+    }
+
     busMarkerRef.current?.remove();
     busMarkerRef.current = null;
-
-    if (!armadaAktif) return;
 
     const elemen = document.createElement("div");
     elemen.className = "jj-map-bus";
@@ -268,6 +281,7 @@ export function CorridorMap({
     busMarkerRef.current = new maplibregl.Marker({ element: elemen, anchor: "center" })
       .setLngLat([armadaAktif.lng, armadaAktif.lat])
       .addTo(map);
+    busMarkerBusIdRef.current = armadaAktif.busId;
   }, [armadaAktif, siap]);
 
   if (gagal) {
@@ -303,7 +317,7 @@ export function CorridorMap({
                         className="grid min-h-11 min-w-11 place-items-center rounded-lg hover:bg-elevated"
                       >
                         <span
-                          className="grid size-8 place-items-center rounded-full border-2 text-[0.625rem] font-bold"
+                          className="grid size-8 place-items-center rounded-full border-2 text-[0.6875rem] font-bold"
                           style={{
                             borderColor: koridor.warnaHex,
                             backgroundColor: dipilih ? koridor.warnaHex : "var(--bg-surface)",

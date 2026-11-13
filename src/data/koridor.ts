@@ -25,7 +25,7 @@ export const KORIDOR: Koridor[] = [
     warnaHex: "#1D4ED8",
     durasiTempuhMenit: 45,
     jarakKmPerkiraan: 13,
-    sumberUrutan: "Jentik, 29 April 2026",
+    sumberUrutan: "Tribun Jambi, 14 Juni 2025",
   },
   {
     id: "K3",

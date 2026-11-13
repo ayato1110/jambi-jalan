@@ -130,7 +130,7 @@ export default function MonitoringArmadaPage() {
           <p className="font-mono text-lg font-bold tabular text-ink">
             {menitKeJam(jam.menit)} <span className="text-xs font-medium text-ink-muted">WIB</span>
           </p>
-          <p className="text-[0.625rem] text-ink-muted">
+          <p className="text-[0.6875rem] text-ink-muted">
             {pakaiJamDemo ? "Diatur dari halaman Beranda." : "Mengikuti waktu perangkat."}
           </p>
         </div>

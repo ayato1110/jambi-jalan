@@ -55,6 +55,8 @@ export interface StatusArmadaAktif {
   indeksHalteSekarang: number;
   lat: number;
   lng: number;
+  sumberPosisi?: "simulasi" | "gps";
+  akurasiMeter?: number;
   terakhirDiperbaruiMs: number;
   sinyalDiputusSimulasi: boolean;
   antreanOfflineCount: number;

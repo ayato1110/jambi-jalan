@@ -12,7 +12,7 @@ import {
 import { HALTE, HALTE_PER_KORIDOR } from "@/data/halte";
 import { JADWAL_MAP } from "@/data/jadwal";
 import { posisiInterpolasiHalte } from "@/lib/geoUtils";
-import { posisiDiRute } from "@/lib/routeJalan";
+import { cariIndeksHalteTerdekat, posisiDiRute } from "@/lib/routeJalan";
 import { PARAMETER_SIMULASI_AWAL } from "@/lib/simulatorEngine";
 import type {
   Halte,
@@ -58,6 +58,10 @@ export interface JambiJalanActions {
   mulaiTrip: (unit: UnitArmadaDipilih) => void;
   akhiriTrip: (busId: string) => void;
   perbaruiPosisi: (busId: string, indeksHalte: number) => void;
+  perbaruiPosisiGps: (
+    busId: string,
+    posisi: { lat: number; lng: number; akurasiMeter: number },
+  ) => void;
   majukanPosisi: (busId: string, deltaIndeks: number) => void;
   setSinyalDiputus: (busId: string, putus: boolean) => void;
   tambahHalte: (halte: Halte) => void;
@@ -214,6 +218,7 @@ export const useJambiJalanStore = create<JambiJalanStore>()(
               indeksHalteSekarang: posisi.indeksHalteSekarang,
               lat: posisi.lat,
               lng: posisi.lng,
+              sumberPosisi: "simulasi",
               terakhirDiperbaruiMs: Date.now(),
               sinyalDiputusSimulasi: false,
               antreanOfflineCount: 0,
@@ -264,6 +269,43 @@ export const useJambiJalanStore = create<JambiJalanStore>()(
                   ? {
                       ...item,
                       ...posisi,
+                      sumberPosisi: "simulasi",
+                      terakhirDiperbaruiMs: Date.now(),
+                    }
+                  : item,
+              ),
+            };
+          }),
+
+        perbaruiPosisiGps: (busId, posisi) =>
+          ubah((state) => {
+            const armada = state.armadaAktif.find((item) => item.busId === busId);
+            if (!armada) return {};
+
+            if (armada.sinyalDiputusSimulasi) {
+              return {
+                armadaAktif: state.armadaAktif.map((item) =>
+                  item.busId === busId
+                    ? { ...item, antreanOfflineCount: item.antreanOfflineCount + 1 }
+                    : item,
+                ),
+              };
+            }
+
+            return {
+              armadaAktif: state.armadaAktif.map((item) =>
+                item.busId === busId
+                  ? {
+                      ...item,
+                      lat: posisi.lat,
+                      lng: posisi.lng,
+                      sumberPosisi: "gps",
+                      akurasiMeter: posisi.akurasiMeter,
+                      indeksHalteSekarang: cariIndeksHalteTerdekat(
+                        item.koridorId,
+                        posisi.lat,
+                        posisi.lng,
+                      ),
                       terakhirDiperbaruiMs: Date.now(),
                     }
                   : item,
@@ -299,6 +341,7 @@ export const useJambiJalanStore = create<JambiJalanStore>()(
                   ? {
                       ...item,
                       ...posisi,
+                      sumberPosisi: "simulasi",
                       terakhirDiperbaruiMs: Date.now(),
                     }
                   : item,

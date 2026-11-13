@@ -68,7 +68,7 @@ export function PassengerHeader() {
                 JAMBI JALAN
               </span>
             </Link>
-            <span className="hidden whitespace-nowrap rounded bg-brand-soft px-2 py-0.5 text-[0.625rem] font-semibold text-brand-deep sm:inline">
+            <span className="hidden whitespace-nowrap rounded bg-brand-soft px-2 py-0.5 text-[0.6875rem] font-semibold text-brand-deep sm:inline">
               TRANS BAHAGIA
             </span>
           </div>
@@ -124,7 +124,7 @@ export function PassengerHeader() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2 pb-2 sm:hidden">
-          <span className="whitespace-nowrap rounded bg-brand-soft px-2 py-0.5 text-[0.625rem] font-semibold text-brand-deep">
+          <span className="whitespace-nowrap rounded bg-brand-soft px-2 py-0.5 text-[0.6875rem] font-semibold text-brand-deep">
             TRANS BAHAGIA
           </span>
           <nav aria-label="Pindah peran" className="flex items-center gap-1">

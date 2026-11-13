@@ -257,7 +257,7 @@ export default function BerandaJadwalPage() {
     : `${status.pesan} Keberangkatan pertama berikutnya pukul 05.30 WIB dari Terminal Rawasari.`;
 
   return (
-    <div className="mx-auto w-full max-w-[560px] px-4 pt-6">
+    <div className="mx-auto w-full max-w-[960px] px-4 pt-6">
       <header className="mb-4">
         <p className="text-xs font-semibold text-brand-deep">Beranda Penumpang</p>
         <h1 className="mt-1 text-[1.375rem] font-bold leading-tight text-ink">
@@ -278,7 +278,8 @@ export default function BerandaJadwalPage() {
           />
         ) : null}
 
-        <section aria-label="Pilih perjalanan" className="rounded-xl border border-line bg-surface p-4">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
+          <section aria-label="Pilih perjalanan" className="rounded-xl border border-line bg-surface p-4">
           <CorridorPicker nilai={koridorAktif} onUbah={setKoridorAktif} />
 
           <div className="mt-4">
@@ -313,7 +314,8 @@ export default function BerandaJadwalPage() {
           </div>
         </section>
 
-        {!jam.siap ? (
+          <div className="min-w-0 space-y-4">
+            {!jam.siap ? (
           <SkeletonBlock baris={7} label="Memuat papan keberangkatan" />
         ) : halteKoridor.length === 0 || !halte ? (
           <EmptyStateCard
@@ -378,6 +380,8 @@ export default function BerandaJadwalPage() {
           onUbah={setJamSimulasiMenit}
           onReset={() => setJamSimulasiMenit(null)}
         />
+          </div>
+        </div>
       </div>
     </div>
   );

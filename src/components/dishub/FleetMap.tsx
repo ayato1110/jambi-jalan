@@ -10,6 +10,7 @@ import type {
 } from "maplibre-gl";
 import { SkeletonBlock } from "@/components/ui/SkeletonBlock";
 import { KORIDOR, KORIDOR_MAP } from "@/data/koridor";
+import { RUTE_JALAN } from "@/data/ruteJalan";
 import type { Halte, StatusArmadaAktif } from "@/lib/types";
 
 type ModulPeta = typeof import("maplibre-gl");
@@ -46,8 +47,6 @@ export function FleetMap({
   const mapRef = useRef<MapLibreMap | null>(null);
   const modulRef = useRef<ModulPeta | null>(null);
   const busMarkersRef = useRef<MapLibreMarker[]>([]);
-  const daftarRef = useRef(daftarHalte);
-
   const [siap, setSiap] = useState(false);
   const [gagal, setGagal] = useState(false);
   const [percobaan, setPercobaan] = useState(0);
@@ -62,10 +61,6 @@ export function FleetMap({
       })),
     [daftarHalte],
   );
-
-  useEffect(() => {
-    daftarRef.current = daftarHalte;
-  }, [daftarHalte]);
 
   useEffect(() => {
     if (gagal || !containerRef.current) return;
@@ -104,7 +99,6 @@ export function FleetMap({
           if (dibatalkan) return;
           window.clearTimeout(batasWaktu);
 
-          const semuaTitik = daftarRef.current;
           for (const { koridor, halte } of rute) {
             if (halte.length < 2) continue;
 
@@ -115,7 +109,9 @@ export function FleetMap({
                 properties: {},
                 geometry: {
                   type: "LineString",
-                  coordinates: halte.map((item) => [item.lng, item.lat]),
+                  coordinates:
+                    RUTE_JALAN[koridor.id]?.koordinat ??
+                    halte.map((item) => [item.lng, item.lat]),
                 },
               },
             });
@@ -131,11 +127,16 @@ export function FleetMap({
             });
           }
 
-          if (semuaTitik.length > 0) {
-            const batas = new maplibregl.LngLatBounds();
-            for (const halte of semuaTitik) {
-              batas.extend([halte.lng, halte.lat]);
+          const batas = new maplibregl.LngLatBounds();
+          for (const { koridor, halte } of rute) {
+            const koordinat =
+              RUTE_JALAN[koridor.id]?.koordinat ??
+              halte.map((item) => [item.lng, item.lat] as [number, number]);
+            for (const [lng, lat] of koordinat) {
+              batas.extend([lng, lat]);
             }
+          }
+          if (!batas.isEmpty()) {
             map.fitBounds(batas, { padding: 36, duration: 0 });
           }
 

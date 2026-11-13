@@ -43,6 +43,13 @@ export function SimClockBar({
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
+            onClick={() => onUbah(6 * 60 + 50)}
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-brand bg-brand-soft px-3 text-xs font-semibold text-brand-deep hover:bg-elevated active:translate-y-px"
+          >
+            Siapkan Demo 06.50
+          </button>
+          <button
+            type="button"
             onClick={() => setTerbuka((nilaiTerbuka) => !nilaiTerbuka)}
             aria-expanded={terbuka}
             aria-controls="pengatur-waktu-operasional"

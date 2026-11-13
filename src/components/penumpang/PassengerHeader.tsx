@@ -21,6 +21,14 @@ function IkonBus() {
 const tautanPeran =
   "inline-flex min-h-11 items-center rounded-lg px-2 text-xs font-semibold text-ink-secondary underline decoration-line underline-offset-4 hover:bg-elevated hover:text-ink active:translate-y-px";
 
+const MENU_DESKTOP = [
+  { href: "/", label: "Jadwal" },
+  { href: "/peta", label: "Peta & Halte" },
+  { href: "/rencana", label: "Rencana" },
+  { href: "/panduan-tap", label: "Panduan Tap" },
+  { href: "/aksesibel", label: "Aksesibel" },
+];
+
 export function PassengerHeader() {
   const pathname = usePathname();
   const modeAksesibel = useJambiJalanStore((state) => state.modeAksesibel);
@@ -64,6 +72,26 @@ export function PassengerHeader() {
               TRANS BAHAGIA
             </span>
           </div>
+
+          <nav aria-label="Navigasi utama" className="hidden items-center gap-1 lg:flex">
+            {MENU_DESKTOP.map((menu) => {
+              const aktif = pathname === menu.href;
+              return (
+                <Link
+                  key={menu.href}
+                  href={menu.href}
+                  aria-current={aktif ? "page" : undefined}
+                  className={`${tautanPeran} ${
+                    aktif
+                      ? "bg-brand-soft text-brand-deep no-underline"
+                      : "no-underline"
+                  }`}
+                >
+                  {menu.label}
+                </Link>
+              );
+            })}
+          </nav>
 
           <div className="flex items-center gap-2">
             <nav aria-label="Pindah peran" className="hidden items-center gap-1 sm:flex">

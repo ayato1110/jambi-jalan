@@ -10,6 +10,8 @@ import type {
   StyleSpecification,
 } from "maplibre-gl";
 import { SkeletonBlock } from "@/components/ui/SkeletonBlock";
+import { RUTE_JALAN } from "@/data/ruteJalan";
+import { posisiDiRute } from "@/lib/routeJalan";
 import type { Halte, Koridor, StatusArmadaAktif } from "@/lib/types";
 
 type ModulPeta = typeof import("maplibre-gl");
@@ -118,7 +120,8 @@ export function CorridorMap({
           if (dibatalkan) return;
           window.clearTimeout(batasWaktu);
 
-          const koordinat = daftar.map((halte) => [halte.lng, halte.lat]);
+          const koordinat =
+            RUTE_JALAN[koridor.id]?.koordinat ?? daftar.map((halte) => [halte.lng, halte.lat]);
           if (koordinat.length > 1) {
             map.addSource("rute-koridor", {
               type: "geojson",
@@ -155,7 +158,10 @@ export function CorridorMap({
                 },
                 geometry: {
                   type: "Point",
-                  coordinates: [halte.lng, halte.lat],
+                  coordinates: (() => {
+                    const titik = posisiDiRute(koridor.id, halte.urutan);
+                    return titik ? [titik.lng, titik.lat] : [halte.lng, halte.lat];
+                  })(),
                 },
               })),
             };
@@ -211,10 +217,12 @@ export function CorridorMap({
             map.getCanvas().style.cursor = "";
           });
 
-          if (daftar.length > 0) {
+          const ruteJalan = RUTE_JALAN[koridor.id];
+          const semuaTitik = ruteJalan?.koordinat ?? daftar.map((halte) => [halte.lng, halte.lat] as [number, number]);
+          if (semuaTitik.length > 0) {
             const batas = new maplibregl.LngLatBounds();
-            for (const halte of daftar) {
-              batas.extend([halte.lng, halte.lat]);
+            for (const [lng, lat] of semuaTitik) {
+              batas.extend([lng, lat]);
             }
             map.fitBounds(batas, { padding: 36, duration: 0 });
           }
@@ -237,7 +245,7 @@ export function CorridorMap({
       modulRef.current = null;
       setSiap(false);
     };
-  }, [gagal, koridor.warnaHex, kunciHalte, percobaan]);
+  }, [gagal, koridor.id, koridor.warnaHex, kunciHalte, percobaan]);
 
   useEffect(() => {
     if (!siap) return;

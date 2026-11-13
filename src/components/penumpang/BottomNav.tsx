@@ -17,7 +17,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navigasi utama penumpang"
-      className="bottom-nav-safe fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface shadow-[0_4px_12px_rgba(17,28,24,0.08)]"
+      className="bottom-nav-safe fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface shadow-[0_4px_12px_rgba(17,28,24,0.08)] lg:hidden"
     >
       <div className="mx-auto flex w-full max-w-[560px] items-stretch">
         {MENU.map((menu) => {

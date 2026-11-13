@@ -73,6 +73,7 @@ export default function PanelTripPage() {
   const mulaiTrip = useJambiJalanStore((state) => state.mulaiTrip);
   const akhiriTrip = useJambiJalanStore((state) => state.akhiriTrip);
   const setSinyalDiputus = useJambiJalanStore((state) => state.setSinyalDiputus);
+  const setJamSimulasiMenit = useJambiJalanStore((state) => state.setJamSimulasiMenit);
 
   const jam = useSimClock(jamSimulasiMenit);
   const [autoMove, setAutoMove] = useState(false);
@@ -125,7 +126,7 @@ export default function PanelTripPage() {
         state.perbaruiPosisi(unit.id, armadaSekarang.indeksHalteSekarang);
       }
       setJumlahPing((jumlah) => jumlah + 1);
-    }, 10_000);
+    }, autoMove ? 1_200 : 10_000);
 
     return () => window.clearInterval(interval);
   }, [autoMove, berjalan, unit]);
@@ -150,6 +151,23 @@ export default function PanelTripPage() {
     akhiriTrip(unit.id);
     setAutoMove(false);
     setPesanDemo("Trip diakhiri. Posisi terakhir tetap tersimpan.");
+  };
+
+  const jalankanDemo = () => {
+    if (!unit || !tripTerpilih) return;
+
+    if (!berjalan) {
+      const [jamBerangkat, menitBerangkat] = tripTerpilih.berangkat.split(":").map(Number);
+      setJamSimulasiMenit(Math.max(0, jamBerangkat * 60 + menitBerangkat - 10));
+      mulai();
+      setAutoMove(true);
+      setPesanDemo(
+        "Demo perjalanan dimulai 10 menit sebelum keberangkatan. Bus bergerak sepanjang rute jalan.",
+      );
+      return;
+    }
+
+    setAutoMove((aktif) => !aktif);
   };
 
   const ubahSinyal = (putus: boolean) => {
@@ -298,8 +316,9 @@ export default function PanelTripPage() {
           </div>
         </dl>
         <p className="mt-2 text-xs leading-relaxed text-pramudi-muted">
-          Ping dikirim setiap 10 detik saat trip berjalan. Badge penumpang berubah menjadi
-          perkiraan jadwal bila ping tidak diterima lebih dari 20 detik.
+          Ping dikirim setiap 10 detik saat trip normal. Mode demo mempercepat pembaruan.
+          Badge penumpang berubah menjadi perkiraan jadwal bila ping tidak diterima lebih dari 20
+          detik.
         </p>
       </section>
 
@@ -317,11 +336,22 @@ export default function PanelTripPage() {
           tanpa pergerakan kendaraan.
         </p>
 
+        <button
+          type="button"
+          onClick={jalankanDemo}
+          className="mt-3 inline-flex min-h-14 w-full items-center justify-center rounded-xl bg-brand px-4 text-sm font-extrabold text-white hover:bg-brand-deep active:translate-y-px"
+        >
+          {autoMove ? "Hentikan Demo Perjalanan" : "Jalankan Demo Perjalanan"}
+        </button>
+        <p className="mt-1 text-xs leading-relaxed text-pramudi-muted">
+          Mode demo mempercepat pembaruan posisi. Di luar demo, pembaruan dikirim setiap 10 detik.
+        </p>
+
         <div className="mt-2 divide-y divide-pramudi-line">
           <SaklarDemo
             id="auto-move"
             label="Simulasi Bus Bergerak Otomatis"
-            deskripsi="Menggeser posisi bus ke halte berikutnya setiap 10 detik."
+            deskripsi="Menggeser posisi bus sepanjang rute jalan, sekitar 75 detik per koridor."
             checked={autoMove}
             onUbah={setAutoMove}
             disabled={!berjalan}

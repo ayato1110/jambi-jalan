@@ -316,7 +316,7 @@ export default function RencanaPerjalananPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[560px] px-4 pt-6">
+    <div className="mx-auto w-full max-w-[960px] px-4 pt-6">
       <header className="mb-4">
         <p className="text-xs font-semibold text-brand-deep">Rencana Perjalanan</p>
         <h1 className="mt-1 text-[1.375rem] font-bold leading-tight text-ink">
@@ -327,7 +327,7 @@ export default function RencanaPerjalananPage() {
         </p>
       </header>
 
-      <div className="space-y-4">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
         <section aria-label="Pilih halte asal dan tujuan" className="rounded-xl border border-line bg-surface p-4">
           <div>
             <label htmlFor="halte-asal" className="block text-sm font-semibold text-ink">

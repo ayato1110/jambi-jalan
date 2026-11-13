@@ -12,6 +12,7 @@ import {
 import { HALTE, HALTE_PER_KORIDOR } from "@/data/halte";
 import { JADWAL_MAP } from "@/data/jadwal";
 import { posisiInterpolasiHalte } from "@/lib/geoUtils";
+import { posisiDiRute } from "@/lib/routeJalan";
 import { PARAMETER_SIMULASI_AWAL } from "@/lib/simulatorEngine";
 import type {
   Halte,
@@ -117,6 +118,15 @@ function hitungPosisiArmada(
   if (halteKoridor.length === 0) return null;
 
   const posisi = Math.min(Math.max(indeks, 1), halteKoridor.length);
+  const koordinatJalan = posisiDiRute(koridorId, posisi);
+  if (koordinatJalan) {
+    return {
+      indeksHalteSekarang: posisi,
+      lat: koordinatJalan.lat,
+      lng: koordinatJalan.lng,
+    };
+  }
+
   const koordinat = posisiInterpolasiHalte(halteKoridor, posisi);
 
   return {

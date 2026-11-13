@@ -16,7 +16,7 @@ export default function PenumpangLayout({ children }: { children: ReactNode }) {
       <main id="konten" tabIndex={-1} className="flex-1">
         {children}
       </main>
-      <footer className="mx-auto w-full max-w-[560px] px-4 pb-bottom-nav pt-6 text-xs leading-relaxed text-ink-muted">
+      <footer className="mx-auto w-full max-w-[1000px] px-4 pb-bottom-nav pt-6 text-xs leading-relaxed text-ink-muted">
         <p>
           JAMBI JALAN · Sistem Informasi Penumpang &amp; Evaluasi Operasional Bus Listrik Trans
           Bahagia Kota Jambi.

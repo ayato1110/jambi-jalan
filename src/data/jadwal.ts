@@ -88,9 +88,9 @@ const DEFINISI_TRIP: DefinisiTrip[] = [
 ];
 
 const CATATAN_ARAH_BALIK =
-  "Jadwal arah Alam Barajo ke Rawasari mengikuti asumsi operasional.";
+  "Jadwal arah balik mengikuti asumsi operasional.";
 
-const KORIDOR: KoridorId[] = ["K1", "K2", "K3"];
+const KORIDOR: KoridorId[] = ["K1", "K1R", "K2", "K2R", "K3", "K3R"];
 
 export const JADWAL_TRIP: JadwalTrip[] = KORIDOR.flatMap((koridorId) =>
   DEFINISI_TRIP.map((trip) => ({
@@ -101,11 +101,10 @@ export const JADWAL_TRIP: JadwalTrip[] = KORIDOR.flatMap((koridorId) =>
     tiba: trip.tiba,
     berangkatAlternatif: trip.berangkatAlternatif,
     tibaAlternatif: trip.tibaAlternatif,
-    catatanWaktu:
-      koridorId === "K2"
-        ? [trip.catatanWaktu, CATATAN_ARAH_BALIK].filter(Boolean).join(" ")
-        : trip.catatanWaktu,
-    isAsumsiArahBalik: koridorId === "K2",
+    catatanWaktu: koridorId.endsWith("R")
+      ? [trip.catatanWaktu, CATATAN_ARAH_BALIK].filter(Boolean).join(" ")
+      : trip.catatanWaktu,
+    isAsumsiArahBalik: koridorId.endsWith("R"),
     kepenuhan: trip.kepenuhan,
     alasanKepenuhan: trip.alasanKepenuhan,
     saranTripLonggar: trip.saranTripLonggar,
@@ -114,8 +113,11 @@ export const JADWAL_TRIP: JadwalTrip[] = KORIDOR.flatMap((koridorId) =>
 
 export const JADWAL_PER_KORIDOR: Record<KoridorId, JadwalTrip[]> = {
   K1: JADWAL_TRIP.filter((trip) => trip.koridorId === "K1"),
+  K1R: JADWAL_TRIP.filter((trip) => trip.koridorId === "K1R"),
   K2: JADWAL_TRIP.filter((trip) => trip.koridorId === "K2"),
+  K2R: JADWAL_TRIP.filter((trip) => trip.koridorId === "K2R"),
   K3: JADWAL_TRIP.filter((trip) => trip.koridorId === "K3"),
+  K3R: JADWAL_TRIP.filter((trip) => trip.koridorId === "K3R"),
 };
 
 export const JADWAL_MAP = new Map(JADWAL_TRIP.map((trip) => [trip.id, trip]));

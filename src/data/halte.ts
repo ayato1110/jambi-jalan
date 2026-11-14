@@ -8,6 +8,7 @@ const ALAM_BARAJO: Koordinat = { lat: -1.6358, lng: 103.5583 };
 const JELUTUNG: Koordinat = { lat: -1.618, lng: 103.631 };
 const ASRAMA_HAJI: Koordinat = { lat: -1.6375, lng: 103.6195 };
 const PAAL_X: Koordinat = { lat: -1.658, lng: 103.612 };
+const JALAN_ASSAAT: Koordinat = { lat: -1.5962, lng: 103.617 };
 
 const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
   K1: [
@@ -17,13 +18,84 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Simpang Mangga",
     "Kebun Jahe",
     "SDN 31",
-    "D'Boss Laundry (depan Apotek K24)",
+    "D'Boss Laundry (Depan Apotik K24)",
+    "Taman Simpang Pulai",
+    "Masjid Azizi",
+    "RM Sederhana",
+    "Pempek Selamat",
+    "Cosera Resto",
+    "Kantor OJK",
+    "Honda Sipin",
+    "Universitas NH",
+    "Kerinci Permata Motor",
+    "Taman Tugu Juang",
+    "Indomaret Tugu Juang",
+    "STM Bawah",
+    "Apotek K24 Sipin",
+    "Nusa Indah 1",
+    "Transito",
+    "Kuburan Cina",
+    "Lorong Hidayat",
+    "Mitra Bangunan",
+    "Azila Store Simpang Rimbo",
+    "SDN 205",
+    "Dinas Pertanian Kota",
+    "Perwakilan NPM Simpang Rimbo",
+    "Terminal Alam Barajo",
+  ],
+  K1R: [
+    "Terminal Alam Barajo",
+    "Jalan Pelangi",
+    "PT United Tractors",
+    "Linda Fashion",
+    "Sanjaya Ban",
+    "Golden Harvest",
+    "Toko Tanah Abang Jambi",
+    "UPT BKN Jambi",
+    "Lorong Riska Tani",
+    "SPBU Kuburan Cina",
+    "Kantor Pimpinan Wilayah Muhammadiyah",
+    "Kedai Sop Uni Linda",
+    "Solo Berseri (STM Atas)",
+    "Spartan Plafon (STM Bawah)",
+    "ATM BRI Jamtos",
+    "Hotel Nusa Wijaya",
+    "Masjid Nurdin Hamzah",
+    "STMIK NH",
+    "Lorong Diamond",
+    "Pasar TAC",
+    "Kantor Telkom",
+    "Saung Kito Sipin",
+    "SMA Ferdi Feri Putra",
+    "Gramedia",
+    "SPBU Kebun Jeruk",
+    "Alfamart Kebun Jeruk",
+    "Hotel Aston",
+    "Leppindo",
+    "Murni",
+    "Benteng",
+    "Masjid Agung Al Falah",
+    "Pasar Angso Duo",
+    "WTC (Starbucks)",
+    "Kantor Pos Ancol",
+    "RS Bhayangkara",
+    "SMPN 1",
+    "Terminal Rawasari",
+  ],
+  K2: [
+    "Terminal Rawasari",
+    "Saimens Pasar",
+    "NH Plaza",
+    "Simpang Mangga",
+    "Kebun Jahe",
+    "SDN 31",
+    "D'Boss Laundry (Depan Apotik K24)",
     "SDN 9",
     "RS Baiturrahim",
     "Samsung Service Centre",
     "Tribun Jambi",
     "Lorong Nusantara",
-    "Toko Permai (depan Dishub Jambi)",
+    "Toko Permai (Depan Dishub Jambi)",
     "Pempek Noni",
     "Agatha Travel",
     "Dinas Damkar",
@@ -43,7 +115,7 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Perwakilan NPM Simpang Rimbo",
     "Terminal Alam Barajo",
   ],
-  K2: [
+  K2R: [
     "Terminal Alam Barajo",
     "Jalan Pelangi",
     "PT United Tractors",
@@ -80,7 +152,6 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Terminal Rawasari",
   ],
   K3: [
-    "Terminal Rawasari",
     "Jalan Mr. Assaat",
     "MTS Al-Khairiyah",
     "SMPN 2 Kota Jambi",
@@ -92,14 +163,14 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Pondok Kelapo",
     "Kantor Lurah Jelutung",
     "Pasar Kebun Handil (Alfamart)",
-    "Pasar Kebun Handil (SPBU)",
+    "Kantor Lurah Kebun Handil (SPBU)",
     "SDN 35",
     "Puskesmas Kebun Handil",
     "SDN 77",
     "Asrama Haji Kota Jambi",
     "Dinas Kesehatan Kota Jambi",
     "Poltekes Kemenkes Jambi",
-    "GOR Kota Baru",
+    "GOR Kota Baru - Kota Jambi",
     "Dinas PU Provinsi Jambi",
     "RS Mitra Kota Jambi",
     "Kantor Camat Kota Baru",
@@ -115,12 +186,50 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Puskesmas Paal X",
     "Warung Lesehan Jempol",
   ],
+  K3R: [
+    "Warung Lesehan Jempol",
+    "Puskesmas Paal X",
+    "SDN 206 Kota Jambi",
+    "SMPN 18 Kota Jambi",
+    "SMAN 8 Kota Jambi",
+    "Masjid At-Taqwa",
+    "SMK Taruna",
+    "Simpang Letmud Sarniem",
+    "Fresh Star Buah",
+    "BPK Perwakilan Provinsi Jambi",
+    "Alfamart Pangeran Hidayat",
+    "Kantor Camat Kota Baru",
+    "RS Mitra Kota Jambi",
+    "Dinas PU Provinsi Jambi",
+    "GOR Kota Baru - Kota Jambi",
+    "Poltekes Kemenkes Jambi",
+    "Dinas Kesehatan Kota Jambi",
+    "Asrama Haji Kota Jambi",
+    "SDN 77",
+    "Puskesmas Kebun Handil",
+    "SDN 35",
+    "Kantor Lurah Kebun Handil (SPBU)",
+    "Pasar Kebun Handil (Alfamart)",
+    "Kantor Lurah Jelutung",
+    "Pondok Kelapo",
+    "Jalan Moh. Bafadhal",
+    "BNN",
+    "Lorong Gerobak",
+    "Warung Ahok",
+    "Bank Mandiri",
+    "SMPN 2 Kota Jambi",
+    "MTS Al-Khairiyah",
+    "Jalan Mr. Assaat",
+  ],
 };
 
 const JANGKAR: Record<KoridorId, readonly Koordinat[]> = {
   K1: [RAWASARI, SIPIN, ALAM_BARAJO],
-  K2: [ALAM_BARAJO, SIMPANG_KAWAT, RAWASARI],
-  K3: [RAWASARI, JELUTUNG, ASRAMA_HAJI, PAAL_X],
+  K1R: [ALAM_BARAJO, SIPIN, RAWASARI],
+  K2: [RAWASARI, SIMPANG_KAWAT, ALAM_BARAJO],
+  K2R: [ALAM_BARAJO, SIMPANG_KAWAT, RAWASARI],
+  K3: [JALAN_ASSAAT, JELUTUNG, ASRAMA_HAJI, PAAL_X],
+  K3R: [PAAL_X, ASRAMA_HAJI, JELUTUNG, JALAN_ASSAAT],
 };
 
 function buatHalte(koridorId: KoridorId): Halte[] {
@@ -147,14 +256,20 @@ function buatHalte(koridorId: KoridorId): Halte[] {
 
 export const HALTE: Halte[] = [
   ...buatHalte("K1"),
+  ...buatHalte("K1R"),
   ...buatHalte("K2"),
+  ...buatHalte("K2R"),
   ...buatHalte("K3"),
+  ...buatHalte("K3R"),
 ];
 
 export const HALTE_PER_KORIDOR: Record<KoridorId, Halte[]> = {
   K1: HALTE.filter((halte) => halte.koridorId === "K1"),
+  K1R: HALTE.filter((halte) => halte.koridorId === "K1R"),
   K2: HALTE.filter((halte) => halte.koridorId === "K2"),
+  K2R: HALTE.filter((halte) => halte.koridorId === "K2R"),
   K3: HALTE.filter((halte) => halte.koridorId === "K3"),
+  K3R: HALTE.filter((halte) => halte.koridorId === "K3R"),
 };
 
 export const HALTE_MAP = new Map(HALTE.map((halte) => [halte.id, halte]));
@@ -163,6 +278,6 @@ export function ambilHalte(koridorId: KoridorId, urutan: number): Halte | undefi
   return HALTE_PER_KORIDOR[koridorId][urutan - 1];
 }
 
-export function haltePertama(koridorId: KoridorId): Halte {
+export function haltePertama(koridorId: KoridorId): Halte | undefined {
   return HALTE_PER_KORIDOR[koridorId][0];
 }

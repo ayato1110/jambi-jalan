@@ -415,19 +415,51 @@ export const useJambiJalanStore = create<JambiJalanStore>()(
     },
     {
       name: KUNCI_PENYIMPANAN,
-      version: 1,
+      version: 2,
       skipHydration: true,
       storage: createJSONStorage(() => localStorage),
       partialize: ambilStateTersimpan,
+      migrate: (persisted, versi) => {
+        const lama = (persisted ?? {}) as Partial<JambiJalanState>;
+        if (versi < 2) {
+          return {
+            ...lama,
+            daftarHalte: HALTE.map((halte) => ({ ...halte })),
+            halteKeberangkatanId: HALTE_PER_KORIDOR.K1[0].id,
+            koridorAktif: "K1",
+          } as JambiJalanState;
+        }
+        return lama as JambiJalanState;
+      },
       merge: (persisted, current) => {
         const tersimpan = (persisted ?? {}) as Partial<JambiJalanState>;
+        const halteLengkap =
+          Array.isArray(tersimpan.daftarHalte) &&
+          tersimpan.daftarHalte.some((halte) => halte.koridorId === "K1R") &&
+          tersimpan.daftarHalte.some((halte) => halte.koridorId === "K2R") &&
+          tersimpan.daftarHalte.some((halte) => halte.koridorId === "K3R");
+        const koridorValid =
+          tersimpan.koridorAktif === "K1" ||
+          tersimpan.koridorAktif === "K1R" ||
+          tersimpan.koridorAktif === "K2" ||
+          tersimpan.koridorAktif === "K2R" ||
+          tersimpan.koridorAktif === "K3" ||
+          tersimpan.koridorAktif === "K3R";
+
         return {
           ...current,
           ...tersimpan,
           daftarHalte:
-            Array.isArray(tersimpan.daftarHalte) && tersimpan.daftarHalte.length > 0
+            halteLengkap && tersimpan.daftarHalte
               ? tersimpan.daftarHalte
-              : current.daftarHalte,
+              : HALTE.map((halte) => ({ ...halte })),
+          koridorAktif: koridorValid
+            ? (tersimpan.koridorAktif as KoridorId)
+            : "K1",
+          halteKeberangkatanId:
+            halteLengkap && tersimpan.halteKeberangkatanId
+              ? tersimpan.halteKeberangkatanId
+              : HALTE_PER_KORIDOR.K1[0].id,
           armadaAktif: Array.isArray(tersimpan.armadaAktif)
             ? tersimpan.armadaAktif
             : current.armadaAktif,
@@ -435,7 +467,7 @@ export const useJambiJalanStore = create<JambiJalanStore>()(
             ...current.parameterSimulasi,
             ...(tersimpan.parameterSimulasi ?? {}),
           },
-        };
+        } as JambiJalanStore;
       },
     },
   ),
@@ -460,8 +492,11 @@ function terapkanPayloadEksternal(payload: Record<string, unknown>): void {
 
   if (
     payload.koridorAktif === "K1" ||
+    payload.koridorAktif === "K1R" ||
     payload.koridorAktif === "K2" ||
-    payload.koridorAktif === "K3"
+    payload.koridorAktif === "K2R" ||
+    payload.koridorAktif === "K3" ||
+    payload.koridorAktif === "K3R"
   ) {
     patch.koridorAktif = payload.koridorAktif;
   }

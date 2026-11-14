@@ -1,4 +1,4 @@
-export type KoridorId = "K1" | "K2" | "K3";
+export type KoridorId = "K1" | "K1R" | "K2" | "K2R" | "K3" | "K3R";
 export type StatusKeyakinan = "langsung" | "perkiraan_jadwal" | "tidak_aktif";
 export type TingkatKepenuhan = "Longgar" | "Sedang" | "Padat";
 export type SumberData = "publik" | "perkiraan" | "contoh" | "asumsi";

@@ -7,6 +7,7 @@ import { ARMADA_LENGKAP } from "@/data/armada";
 import { JADWAL_MAP, JADWAL_PER_KORIDOR } from "@/data/jadwal";
 import { KORIDOR, KORIDOR_MAP } from "@/data/koridor";
 import { jamKeMenit } from "@/lib/scheduleEngine";
+import { koridorArah, koridorDasar } from "@/lib/koridorArah";
 import { useSimClock } from "@/lib/useSimClock";
 import type { KoridorId } from "@/lib/types";
 import { useJambiJalanStore } from "@/store/useJambiJalanStore";
@@ -29,6 +30,9 @@ export default function PilihPenugasanPage() {
   const koridorId = trip?.koridorId ?? koridorLokal;
   const koridor = KORIDOR_MAP[koridorId];
   const daftarTrip = JADWAL_PER_KORIDOR[koridorId];
+  const koridorUtama =
+    KORIDOR.find((item) => item.id === koridorDasar(koridorId)) ?? KORIDOR[0];
+  const arahBalik = koridorId !== koridorUtama.id;
 
   const unitAktifIds = new Set(
     armadaAktif
@@ -174,13 +178,13 @@ export default function PilihPenugasanPage() {
           </h2>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {KORIDOR.map((item) => {
-              const dipilih = item.id === koridorId;
+              const dipilih = item.id === koridorUtama.id;
 
               return (
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => pilihKoridor(item.id)}
+                  onClick={() => pilihKoridor(koridorArah(item.id, arahBalik))}
                   aria-pressed={dipilih}
                   aria-label={`${item.id}, ${item.kode}, via ${item.via}`}
                   className={`min-h-14 rounded-lg border-2 px-2 py-2 text-left active:translate-y-px ${
@@ -201,6 +205,36 @@ export default function PilihPenugasanPage() {
                 </button>
               );
             })}
+          </div>
+          <div
+            role="group"
+            aria-label="Arah perjalanan"
+            className="mt-2 grid grid-cols-2 gap-1 rounded-lg border border-pramudi-line bg-pramudi-bg p-1"
+          >
+            <button
+              type="button"
+              onClick={() => pilihKoridor(koridorUtama.id)}
+              aria-pressed={!arahBalik}
+              className={`min-h-10 rounded-md px-2 text-xs font-semibold ${
+                !arahBalik
+                  ? "bg-brand text-white"
+                  : "text-pramudi-subtext hover:bg-pramudi-raised"
+              }`}
+            >
+              Berangkat
+            </button>
+            <button
+              type="button"
+              onClick={() => pilihKoridor(koridorArah(koridorUtama.id, true))}
+              aria-pressed={arahBalik}
+              className={`min-h-10 rounded-md px-2 text-xs font-semibold ${
+                arahBalik
+                  ? "bg-brand text-white"
+                  : "text-pramudi-subtext hover:bg-pramudi-raised"
+              }`}
+            >
+              Arah balik
+            </button>
           </div>
         </section>
 

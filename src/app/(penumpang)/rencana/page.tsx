@@ -10,7 +10,7 @@ import { HonestyBadge } from "@/components/ui/HonestyBadge";
 import { SkeletonBlock } from "@/components/ui/SkeletonBlock";
 import { HALTE_MAP } from "@/data/halte";
 import { JADWAL_PER_KORIDOR } from "@/data/jadwal";
-import { KORIDOR, KORIDOR_MAP } from "@/data/koridor";
+import { KORIDOR_MAP, KORIDOR_SEMUA } from "@/data/koridor";
 import { estimasiJalanKakiMenit, formatJarak, haversineKm } from "@/lib/geoUtils";
 import { cariTripBerikutnyaDiHalte, jadwalHalteMenit, menitKeJam } from "@/lib/scheduleEngine";
 import type { Halte, KoridorId } from "@/lib/types";
@@ -19,7 +19,7 @@ import { useJambiJalanStore } from "@/store/useJambiJalanStore";
 
 const RUTE_POPULER = [
   { asalId: "K1-01", tujuanId: "K1-09" },
-  { asalId: "K1-01", tujuanId: "K1-31" },
+  { asalId: "K1-01", tujuanId: "K1-30" },
   { asalId: "K2-19", tujuanId: "K2-29" },
   { asalId: "K3-01", tujuanId: "K3-17" },
 ];
@@ -30,21 +30,25 @@ const KANDIDAT_TRANSIT: Array<{
 }> = [
   {
     nama: "Pasar Keluarga",
-    idPerKoridor: { K1: "K1-18", K2: "K2-17" },
+    idPerKoridor: { K2: "K2-18", K2R: "K2R-17" },
   },
   {
     nama: "Terminal Rawasari",
-    idPerKoridor: { K1: "K1-01", K2: "K2-34", K3: "K3-01" },
+    idPerKoridor: { K1: "K1-01", K1R: "K1R-37", K2: "K2-01", K2R: "K2R-34" },
   },
   {
     nama: "Terminal Alam Barajo",
-    idPerKoridor: { K1: "K1-31", K2: "K2-01" },
+    idPerKoridor: { K1: "K1-30", K1R: "K1R-01", K2: "K2-31", K2R: "K2R-01" },
   },
 ];
 
 const PASANGAN_KORIDOR: Partial<Record<KoridorId, KoridorId>> = {
-  K1: "K2",
-  K2: "K1",
+  K1: "K1R",
+  K1R: "K1",
+  K2: "K2R",
+  K2R: "K2",
+  K3: "K3R",
+  K3R: "K3",
 };
 
 function buatTahap(
@@ -339,7 +343,7 @@ export default function RencanaPerjalananPage() {
               onChange={(event) => pilihAsal(event.target.value)}
               className="mt-2 min-h-11 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm font-medium text-ink"
             >
-              {KORIDOR.map((koridor) => {
+              {KORIDOR_SEMUA.map((koridor) => {
                 const daftar = daftarHalte
                   .filter((halte) => halte.koridorId === koridor.id)
                   .sort((a, b) => a.urutan - b.urutan);
@@ -374,7 +378,7 @@ export default function RencanaPerjalananPage() {
               className="mt-2 min-h-11 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm font-medium text-ink"
             >
               <option value="">Pilih halte tujuan</option>
-              {KORIDOR.map((koridor) => {
+              {KORIDOR_SEMUA.map((koridor) => {
                 const daftar = daftarHalte
                   .filter((halte) => halte.koridorId === koridor.id)
                   .sort((a, b) => a.urutan - b.urutan);

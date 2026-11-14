@@ -32,5 +32,5 @@ Aplikasi dibangun sebagai satu proyek Next.js terpadu dengan tiga permukaan (*su
 ## 5. Batasan Kejujuran Data (Wajib Dipatuhi)
 - **Bukan Penentu Kebijakan Resmi:** JAMBI JALAN tidak menetapkan tarif dan tidak memproses pembayaran. Semua keluaran simulator diberi label `ASUMSI SIMULASI`.
 - **Pemisahan Data Publik vs Data Contoh:**
-  - *Sumber Publik:* Nama 3 koridor, daftar 99 titik halte (31 di K1, 34 di K2, 34 di K3), 8 waktu keberangkatan dari Terminal Rawasari, data armada Kalista, dan agregat hasil uji coba Mei sampai September 2025 (36.040 penumpang, 3.066 trip, penurunan emisi 30%).
+  - *Sumber Publik:* Nama 3 koridor dengan 6 varian arah, daftar 198 baris titik halte per arah (30, 37, 31, 34, 33, 33), 8 waktu keberangkatan dari Terminal Rawasari, data armada Kalista, dan agregat hasil uji coba Mei sampai September 2025 (36.040 penumpang, 3.066 trip, penurunan emisi 30%).
   - *Data Contoh / Perkiraan:* Koordinat lintang-bujur halte (hasil pemetaan manual/skematik), jadwal arah balik dari Alam Barajo/Paal X, posisi bus berjalan saat demo, dan angka kepenuhan per halte/jam. Semua wajib diberi penanda visual yang jujur di UI.

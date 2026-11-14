@@ -6,6 +6,7 @@ import { ARMADA_LENGKAP } from "@/data/armada";
 import { JADWAL_MAP } from "@/data/jadwal";
 import { KORIDOR_MAP } from "@/data/koridor";
 import { evaluasiKeyakinan } from "@/lib/confidenceEngine";
+import { DURASI_TEMPUH_DEFAULT_MENIT, jamKeMenit } from "@/lib/scheduleEngine";
 import { useGpsPramudi } from "@/lib/useGpsPramudi";
 import { useSimClock } from "@/lib/useSimClock";
 import { useJambiJalanStore } from "@/store/useJambiJalanStore";
@@ -144,6 +145,22 @@ export default function PanelTripPage() {
 
       if (autoMove) {
         state.majukanPosisi(unit.id, 0.5);
+
+        const setelah = useJambiJalanStore
+          .getState()
+          .armadaAktif.find((armada) => armada.busId === unit.id);
+        const tripBerjalan = setelah ? JADWAL_MAP.get(setelah.tripId) : null;
+        const jumlahHalte = setelah
+          ? state.daftarHalte.filter((halte) => halte.koridorId === setelah.koridorId).length
+          : 0;
+
+        if (setelah && tripBerjalan && jumlahHalte > 1) {
+          const posisiHalte = Math.min(setelah.indeksHalteSekarang, jumlahHalte);
+          const menitSimulasi =
+            jamKeMenit(tripBerjalan.berangkat) +
+            ((posisiHalte - 1) / (jumlahHalte - 1)) * DURASI_TEMPUH_DEFAULT_MENIT;
+          state.setJamSimulasiMenit(menitSimulasi);
+        }
       } else {
         state.perbaruiPosisi(unit.id, armadaSekarang.indeksHalteSekarang);
       }
@@ -183,12 +200,11 @@ export default function PanelTripPage() {
     setGpsIngin(false);
 
     if (!berjalan) {
-      const [jamBerangkat, menitBerangkat] = tripTerpilih.berangkat.split(":").map(Number);
-      setJamSimulasiMenit(Math.max(0, jamBerangkat * 60 + menitBerangkat - 10));
+      setJamSimulasiMenit(jamKeMenit(tripTerpilih.berangkat));
       mulai();
       setAutoMove(true);
       setPesanDemo(
-        "Demo perjalanan dimulai 10 menit sebelum keberangkatan. Bus bergerak sepanjang rute jalan.",
+        `Demo perjalanan dimulai pukul ${tripTerpilih.berangkat}. Waktu simulasi maju mengikuti posisi bus.`,
       );
       return;
     }

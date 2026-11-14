@@ -2059,10 +2059,6 @@ export const RUTE_JALAN: Record<KoridorId, RuteJalan> = {
       [
         103.552252,
         -1.628436
-      ],
-      [
-        103.552252,
-        -1.628436
       ]
     ],
     "jarakHalteM": [

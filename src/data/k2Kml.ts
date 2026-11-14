@@ -1879,10 +1879,6 @@ export const RUTE_K2: { koordinat: Array<[number, number]>; jarakHalteM: number[
     [
       103.552252,
       -1.628436
-    ],
-    [
-      103.552252,
-      -1.628436
     ]
   ],
   "jarakHalteM": [

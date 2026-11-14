@@ -1,6 +1,7 @@
 import { sebarTitikSepanjangPolyline, type Koordinat } from "@/lib/geoUtils";
 import { KOORDINAT_K1, KOORDINAT_K1R } from "@/data/k1Kml";
 import { KOORDINAT_K2, KOORDINAT_K2R } from "@/data/k2Kml";
+import { KOORDINAT_K3, KOORDINAT_K3R } from "@/data/k3Kml";
 import type { Halte, KoridorId } from "@/lib/types";
 
 const RAWASARI: Koordinat = { lat: -1.5944, lng: 103.6158 };
@@ -11,6 +12,42 @@ const JELUTUNG: Koordinat = { lat: -1.618, lng: 103.631 };
 const ASRAMA_HAJI: Koordinat = { lat: -1.6375, lng: 103.6195 };
 const PAAL_X: Koordinat = { lat: -1.658, lng: 103.612 };
 const JALAN_ASSAAT: Koordinat = { lat: -1.5962, lng: 103.617 };
+
+const NAMA_K3 = [
+  "Jalan Mr. Assaat",
+  "MTS Al-Khairiyah",
+  "SMPN 2 Kota Jambi",
+  "Bank Mandiri",
+  "Warung Ahok",
+  "Lorong Gerobak",
+  "BNN",
+  "Jalan Moh. Bafadhal",
+  "Pondok Kelapo",
+  "Kantor Lurah Jelutung",
+  "Pasar Kebun Handil (Alfamart)",
+  "Kantor Lurah Kebun Handil (SPBU)",
+  "SDN 35",
+  "Puskesmas Kebun Handil",
+  "SDN 77",
+  "Asrama Haji Kota Jambi",
+  "Dinas Kesehatan Kota Jambi",
+  "Poltekkes Kemenkes Jambi",
+  "GOR Kota Baru Jambi",
+  "Dinas PU Provinsi Jambi",
+  "RS Mitra Kota Jambi",
+  "Kantor Camat Kotabaru",
+  "Alfamart Pangeran Hidayat",
+  "BPK Perwakilan Provinsi Jambi",
+  "Fresh Star",
+  "Simpang Letmud Sarniem",
+  "SMK Taruna",
+  "Masjid At Taqwa",
+  "SMAN 8 Kota Jambi",
+  "SMPN 18 Kota Jambi",
+  "SDN 206 Kota Jambi",
+  "Puskesmas Paal X",
+  "Warung Lesehan Jempol",
+] as const;
 
 const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
   K1: [
@@ -153,76 +190,8 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "SMPN 1",
     "Terminal Rawasari",
   ],
-  K3: [
-    "Jalan Mr. Assaat",
-    "MTS Al-Khairiyah",
-    "SMPN 2 Kota Jambi",
-    "Bank Mandiri",
-    "Warung Ahok",
-    "Lorong Gerobak",
-    "BNN",
-    "Jalan Moh. Bafadhal",
-    "Pondok Kelapo",
-    "Kantor Lurah Jelutung",
-    "Pasar Kebun Handil (Alfamart)",
-    "Kantor Lurah Kebun Handil (SPBU)",
-    "SDN 35",
-    "Puskesmas Kebun Handil",
-    "SDN 77",
-    "Asrama Haji Kota Jambi",
-    "Dinas Kesehatan Kota Jambi",
-    "Poltekes Kemenkes Jambi",
-    "GOR Kota Baru - Kota Jambi",
-    "Dinas PU Provinsi Jambi",
-    "RS Mitra Kota Jambi",
-    "Kantor Camat Kota Baru",
-    "Alfamart Pangeran Hidayat",
-    "BPK Perwakilan Provinsi Jambi",
-    "Fresh Star Buah",
-    "Simpang Letmud Sarniem",
-    "SMK Taruna",
-    "Masjid At-Taqwa",
-    "SMAN 8 Kota Jambi",
-    "SMPN 18 Kota Jambi",
-    "SDN 206 Kota Jambi",
-    "Puskesmas Paal X",
-    "Warung Lesehan Jempol",
-  ],
-  K3R: [
-    "Warung Lesehan Jempol",
-    "Puskesmas Paal X",
-    "SDN 206 Kota Jambi",
-    "SMPN 18 Kota Jambi",
-    "SMAN 8 Kota Jambi",
-    "Masjid At-Taqwa",
-    "SMK Taruna",
-    "Simpang Letmud Sarniem",
-    "Fresh Star Buah",
-    "BPK Perwakilan Provinsi Jambi",
-    "Alfamart Pangeran Hidayat",
-    "Kantor Camat Kota Baru",
-    "RS Mitra Kota Jambi",
-    "Dinas PU Provinsi Jambi",
-    "GOR Kota Baru - Kota Jambi",
-    "Poltekes Kemenkes Jambi",
-    "Dinas Kesehatan Kota Jambi",
-    "Asrama Haji Kota Jambi",
-    "SDN 77",
-    "Puskesmas Kebun Handil",
-    "SDN 35",
-    "Kantor Lurah Kebun Handil (SPBU)",
-    "Pasar Kebun Handil (Alfamart)",
-    "Kantor Lurah Jelutung",
-    "Pondok Kelapo",
-    "Jalan Moh. Bafadhal",
-    "BNN",
-    "Lorong Gerobak",
-    "Warung Ahok",
-    "Bank Mandiri",
-    "SMPN 2 Kota Jambi",
-    "MTS Al-Khairiyah",
-    "Jalan Mr. Assaat",
-  ],
+  K3: NAMA_K3,
+  K3R: [...NAMA_K3].reverse(),
 };
 
 const JANGKAR: Record<KoridorId, readonly Koordinat[]> = {
@@ -249,7 +218,11 @@ function buatHalte(koridorId: KoridorId): Halte[] {
             ? KOORDINAT_K2[i]
             : koridorId === "K2R"
               ? KOORDINAT_K2R[i]
-              : null;
+              : koridorId === "K3"
+                ? KOORDINAT_K3[i]
+                : koridorId === "K3R"
+                  ? KOORDINAT_K3R[i]
+                  : null;
     const titik = kml ?? koordinat[i];
 
     return {

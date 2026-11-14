@@ -26,7 +26,7 @@ const DATA_PUBLIK = [
 const DATA_CONTOH = [
   {
     komponen: "Koordinat halte",
-    isi: "Pin K1 dan K2 berasal dari KML Google Maps tim. K3 masih memakai interpolasi jangkar kota. Pin ini bukan koordinat resmi Dishub.",
+    isi: "Pin K1, K2, dan K3 berasal dari KML Google Maps tim. Pin ini bukan koordinat resmi Dishub.",
     label: "Perkiraan",
   },
   {

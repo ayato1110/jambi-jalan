@@ -1,4 +1,5 @@
 import { sebarTitikSepanjangPolyline, type Koordinat } from "@/lib/geoUtils";
+import { KOORDINAT_K2, KOORDINAT_K2R } from "@/data/k2Kml";
 import type { Halte, KoridorId } from "@/lib/types";
 
 const RAWASARI: Koordinat = { lat: -1.5944, lng: 103.6158 };
@@ -238,7 +239,9 @@ function buatHalte(koridorId: KoridorId): Halte[] {
 
   return daftarNama.map((nama, i) => {
     const urutan = i + 1;
-    const titik = koordinat[i];
+    const kml =
+      koridorId === "K2" ? KOORDINAT_K2[i] : koridorId === "K2R" ? KOORDINAT_K2R[i] : null;
+    const titik = kml ?? koordinat[i];
 
     return {
       id: `${koridorId}-${String(urutan).padStart(2, "0")}`,
@@ -248,7 +251,7 @@ function buatHalte(koridorId: KoridorId): Halte[] {
       namaSumber: nama,
       lat: Number(titik.lat.toFixed(6)),
       lng: Number(titik.lng.toFixed(6)),
-      sumberKoordinat: "perkiraan",
+      sumberKoordinat: kml ? "publik" : "perkiraan",
       isTerminal: nama.startsWith("Terminal"),
     };
   });

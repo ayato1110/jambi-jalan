@@ -282,9 +282,11 @@ export default function PetaHaltePage() {
                     <div>
                       <dt className="font-semibold text-ink">Status koordinat</dt>
                       <dd className="text-ink-secondary">
-                        {halteTerpilih.sumberKoordinat === "perkiraan"
-                          ? "Titik halte mengikuti jalur koridor."
-                          : "Titik halte belum tersedia."}
+                        {halteTerpilih.sumberKoordinat === "publik"
+                          ? "Koordinat titik halte dari Google Maps."
+                          : halteTerpilih.sumberKoordinat === "perkiraan"
+                            ? "Titik halte mengikuti jalur koridor."
+                            : "Titik halte belum tersedia."}
                       </dd>
                     </div>
                   </dl>

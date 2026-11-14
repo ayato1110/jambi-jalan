@@ -455,7 +455,7 @@ export default function KelolaRutePage() {
                       {halte.namaSumber || halte.nama}
                     </td>
                     <td className="p-3 align-top text-ink-secondary">
-                      {halte.sumberKoordinat === "perkiraan" ? "Titik Koridor" : "Belum ada"}
+                      {halte.sumberKoordinat === "publik" ? "Titik Publik" : halte.sumberKoordinat === "perkiraan" ? "Titik Koridor" : "Belum ada"}
                     </td>
                     <td className="p-3 align-top">
                       <button
@@ -485,7 +485,7 @@ export default function KelolaRutePage() {
                       {halte.namaSumber || halte.nama}
                     </p>
                     <p className="mt-1 text-xs text-ink-muted">
-                      {halte.sumberKoordinat === "perkiraan" ? "Titik koridor" : "Belum ada"}
+                      {halte.sumberKoordinat === "publik" ? "Titik publik" : halte.sumberKoordinat === "perkiraan" ? "Titik koridor" : "Belum ada"}
                     </p>
                   </div>
                   <button

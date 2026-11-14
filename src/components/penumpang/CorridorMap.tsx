@@ -161,6 +161,9 @@ export function CorridorMap({
                 geometry: {
                   type: "Point",
                   coordinates: (() => {
+                    if (halte.sumberKoordinat === "publik") {
+                      return [halte.lng, halte.lat];
+                    }
                     const titik = posisiDiRute(koridor.id, halte.urutan);
                     return titik ? [titik.lng, titik.lat] : [halte.lng, halte.lat];
                   })(),

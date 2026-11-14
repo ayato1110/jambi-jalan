@@ -11,7 +11,7 @@ export interface Halte {
   namaSumber: string;
   lat: number;
   lng: number;
-  sumberKoordinat: "perkiraan" | "belum-ada";
+  sumberKoordinat: "publik" | "perkiraan" | "belum-ada";
   isTerminal?: boolean;
 }
 

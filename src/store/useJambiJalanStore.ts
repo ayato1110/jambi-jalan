@@ -415,13 +415,13 @@ export const useJambiJalanStore = create<JambiJalanStore>()(
     },
     {
       name: KUNCI_PENYIMPANAN,
-      version: 2,
+      version: 3,
       skipHydration: true,
       storage: createJSONStorage(() => localStorage),
       partialize: ambilStateTersimpan,
       migrate: (persisted, versi) => {
         const lama = (persisted ?? {}) as Partial<JambiJalanState>;
-        if (versi < 2) {
+        if (versi < 3) {
           return {
             ...lama,
             daftarHalte: HALTE.map((halte) => ({ ...halte })),

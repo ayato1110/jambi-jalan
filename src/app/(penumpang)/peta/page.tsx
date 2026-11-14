@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CorridorMap } from "@/components/penumpang/CorridorMap";
 import { CorridorPicker } from "@/components/penumpang/CorridorPicker";
 import { RouteThermometer } from "@/components/penumpang/RouteThermometer";
@@ -33,6 +33,8 @@ export default function PetaHaltePage() {
 
   const jam = useSimClock(jamSimulasiMenit);
   const [offline, setOffline] = useState(false);
+  const [sumberPilihan, setSumberPilihan] = useState<"peta" | "daftar" | null>(null);
+  const petaMobileRef = useRef<HTMLDivElement>(null);
 
   const koridor = KORIDOR_MAP[koridorAktif];
   const jadwal = JADWAL_PER_KORIDOR[koridorAktif];
@@ -129,6 +131,22 @@ export default function PetaHaltePage() {
     };
   }, []);
 
+  const pilihDariPeta = (halteId: string) => {
+    setSumberPilihan("peta");
+    setHalteKeberangkatan(halteId);
+  };
+
+  const pilihDariDaftar = (halteId: string) => {
+    setSumberPilihan("daftar");
+    setHalteKeberangkatan(halteId);
+
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      window.requestAnimationFrame(() => {
+        petaMobileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  };
+
   return (
     <div className="mx-auto w-full max-w-[1000px] px-4 pt-6">
       <header className="mb-4">
@@ -214,12 +232,12 @@ export default function PetaHaltePage() {
             </div>
 
             <div className="grid min-w-0 gap-4 md:grid-cols-[1.05fr_0.95fr] md:items-start">
-              <div className="min-w-0 space-y-4 md:sticky md:top-20">
+              <div ref={petaMobileRef} className="min-w-0 space-y-4 md:sticky md:top-20">
                 <CorridorMap
                   koridor={koridor}
                   daftarHalte={halteKoridor}
                   selectedHalteId={halteTerpilih.id}
-                  onPilihHalte={setHalteKeberangkatan}
+                  onPilihHalte={pilihDariPeta}
                   armadaAktif={armadaBerjalan}
                 />
 
@@ -302,7 +320,8 @@ export default function PetaHaltePage() {
                   jamSekarangMenit={jam.menit}
                   keyakinan={keyakinan}
                   selectedHalteId={halteTerpilih.id}
-                  onPilihHalte={setHalteKeberangkatan}
+                  onPilihHalte={pilihDariDaftar}
+                  sumberPilihan={sumberPilihan}
                 />
               </div>
             </div>

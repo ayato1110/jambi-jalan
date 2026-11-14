@@ -20,6 +20,7 @@ export function RouteThermometer({
   keyakinan,
   selectedHalteId,
   onPilihHalte,
+  sumberPilihan,
 }: {
   daftarHalte: Halte[];
   koridor: Koridor;
@@ -29,6 +30,7 @@ export function RouteThermometer({
   keyakinan: KeyakinanPosisi;
   selectedHalteId: string;
   onPilihHalte: (halteId: string) => void;
+  sumberPilihan: "peta" | "daftar" | null;
 }) {
   const jumlahHalte = daftarHalte.length;
   const posisiAktif = posisiBus !== null && keyakinan.status !== "tidak_aktif";
@@ -41,6 +43,8 @@ export function RouteThermometer({
       return;
     }
 
+    if (sumberPilihan !== "peta") return;
+
     const elemen = itemHalteRef.current.get(selectedHalteId);
     if (!elemen) return;
 
@@ -49,7 +53,7 @@ export function RouteThermometer({
     });
 
     return () => window.cancelAnimationFrame(bingkai);
-  }, [selectedHalteId]);
+  }, [selectedHalteId, sumberPilihan]);
 
   const etas = useMemo(() => {
     const peta = new Map<number, EtaHalte>();

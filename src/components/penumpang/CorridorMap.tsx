@@ -59,6 +59,8 @@ export function CorridorMap({
   const onPilihRef = useRef(onPilihHalte);
   const selectedRef = useRef(selectedHalteId);
   const daftarRef = useRef(daftarHalte);
+  const fokusAwalRef = useRef(true);
+  const selectedFokusRef = useRef(selectedHalteId);
 
   const [siap, setSiap] = useState(false);
   const [gagal, setGagal] = useState(false);
@@ -83,6 +85,29 @@ export function CorridorMap({
     if (!map || !siap || !map.getLayer("halte-terpilih")) return;
 
     map.setFilter("halte-terpilih", ["==", ["get", "id"], selectedHalteId]);
+  }, [selectedHalteId, siap]);
+
+  useEffect(() => {
+    if (!siap) return;
+
+    if (fokusAwalRef.current) {
+      fokusAwalRef.current = false;
+      selectedFokusRef.current = selectedHalteId;
+      return;
+    }
+
+    if (selectedFokusRef.current === selectedHalteId) return;
+    selectedFokusRef.current = selectedHalteId;
+
+    const map = mapRef.current;
+    const halte = daftarRef.current.find((item) => item.id === selectedHalteId);
+    if (!map || !halte) return;
+
+    map.easeTo({
+      center: [halte.lng, halte.lat],
+      zoom: 15.5,
+      duration: 700,
+    });
   }, [selectedHalteId, siap]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { HonestyBadge } from "@/components/ui/HonestyBadge";
 import type { KeyakinanPosisi } from "@/lib/confidenceEngine";
 import {
@@ -32,6 +32,24 @@ export function RouteThermometer({
 }) {
   const jumlahHalte = daftarHalte.length;
   const posisiAktif = posisiBus !== null && keyakinan.status !== "tidak_aktif";
+  const itemHalteRef = useRef(new Map<string, HTMLButtonElement>());
+  const sudahPilihRef = useRef(false);
+
+  useEffect(() => {
+    if (!sudahPilihRef.current) {
+      sudahPilihRef.current = true;
+      return;
+    }
+
+    const elemen = itemHalteRef.current.get(selectedHalteId);
+    if (!elemen) return;
+
+    const bingkai = window.requestAnimationFrame(() => {
+      elemen.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    return () => window.cancelAnimationFrame(bingkai);
+  }, [selectedHalteId]);
 
   const etas = useMemo(() => {
     const peta = new Map<number, EtaHalte>();
@@ -249,6 +267,10 @@ export function RouteThermometer({
               <button
                 key={halte.id}
                 type="button"
+                ref={(elemen) => {
+                  if (elemen) itemHalteRef.current.set(halte.id, elemen);
+                  else itemHalteRef.current.delete(halte.id);
+                }}
                 onClick={() => onPilihHalte(halte.id)}
                 aria-current={dipilih ? "true" : undefined}
                 aria-label={`Halte ${halte.urutan}, ${halte.nama}. ${statusBaris}.${tibaDiAkhir ? "" : ` ETA ${eta ? menitKeJam(eta.etaMenit) : "belum tersedia"}.`}`}

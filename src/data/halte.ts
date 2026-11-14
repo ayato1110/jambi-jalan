@@ -1,4 +1,5 @@
 import { sebarTitikSepanjangPolyline, type Koordinat } from "@/lib/geoUtils";
+import { KOORDINAT_K1, KOORDINAT_K1R } from "@/data/k1Kml";
 import { KOORDINAT_K2, KOORDINAT_K2R } from "@/data/k2Kml";
 import type { Halte, KoridorId } from "@/lib/types";
 
@@ -17,7 +18,7 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Saimens Pasar",
     "NH Plaza",
     "Simpang Mangga",
-    "Kebun Jahe",
+    "Halte Trans Bahagia Kebun Jahe",
     "SDN 31",
     "D'Boss Laundry (Depan Apotik K24)",
     "Taman Simpang Pulai",
@@ -29,8 +30,8 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Honda Sipin",
     "Universitas NH",
     "Kerinci Permata Motor",
-    "Taman Tugu Juang",
     "Indomaret Tugu Juang",
+    "Taman Tugu Juang",
     "STM Bawah",
     "Apotek K24 Sipin",
     "Nusa Indah 1",
@@ -40,7 +41,7 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Mitra Bangunan",
     "Azila Store Simpang Rimbo",
     "SDN 205",
-    "Dinas Pertanian Kota",
+    "Dinas Pertanian dan Ketahanan Pangan (DPKP) Kota Jambi",
     "Perwakilan NPM Simpang Rimbo",
     "Terminal Alam Barajo",
   ],
@@ -55,7 +56,7 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "UPT BKN Jambi",
     "Lorong Riska Tani",
     "SPBU Kuburan Cina",
-    "Kantor Pimpinan Wilayah Muhammadiyah",
+    "Kantor Pimpinan Wilayah Muhammadiyah Jambi",
     "Kedai Sop Uni Linda",
     "Solo Berseri (STM Atas)",
     "Spartan Plafon (STM Bawah)",
@@ -67,7 +68,7 @@ const NAMA_HALTE: Record<KoridorId, readonly string[]> = {
     "Pasar TAC",
     "Kantor Telkom",
     "Saung Kito Sipin",
-    "SMA Ferdi Feri Putra",
+    "SMA Ferdy Ferry Putra",
     "Gramedia",
     "SPBU Kebun Jeruk",
     "Alfamart Kebun Jeruk",
@@ -240,7 +241,15 @@ function buatHalte(koridorId: KoridorId): Halte[] {
   return daftarNama.map((nama, i) => {
     const urutan = i + 1;
     const kml =
-      koridorId === "K2" ? KOORDINAT_K2[i] : koridorId === "K2R" ? KOORDINAT_K2R[i] : null;
+      koridorId === "K1"
+        ? KOORDINAT_K1[i]
+        : koridorId === "K1R"
+          ? KOORDINAT_K1R[i]
+          : koridorId === "K2"
+            ? KOORDINAT_K2[i]
+            : koridorId === "K2R"
+              ? KOORDINAT_K2R[i]
+              : null;
     const titik = kml ?? koordinat[i];
 
     return {

@@ -26,7 +26,7 @@ const DATA_PUBLIK = [
 const DATA_CONTOH = [
   {
     komponen: "Koordinat halte",
-    isi: "Titik peta hasil interpolasi jangkar kota, bukan koordinat resmi Dishub.",
+    isi: "Pin K1 dan K2 berasal dari KML Google Maps tim. K3 masih memakai interpolasi jangkar kota. Pin ini bukan koordinat resmi Dishub.",
     label: "Perkiraan",
   },
   {
@@ -86,6 +86,12 @@ const INKONSISTENSI = [
     versiA: "Tidak dipublikasikan",
     versiB: "Dibutuhkan untuk layar penumpang",
     sikap: "Diberi label asumsi dan tidak diklaim sebagai jadwal resmi.",
+  },
+  {
+    topik: "Jumlah titik halte",
+    versiA: "Ringkasan publik: K1 31, K2 34, K3 34",
+    versiB: "Data rute: K1 30 dan 37, K2 31 dan 34, K3 33 dan 33",
+    sikap: "Aplikasi memakai jumlah titik pada KML dan trace, lalu menampilkan jumlah per arah.",
   },
   {
     topik: "Rincian 4 unit tambahan",
